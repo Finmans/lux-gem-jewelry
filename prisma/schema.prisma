@@ -69,6 +69,7 @@ model Product {
   badge        String?
   description  String
   gradient     String?
+  imageUrl     String?
   isFeatured   Boolean    @default(false)
   inStock      Boolean    @default(true)
   createdAt    DateTime   @default(now())
@@ -92,6 +93,7 @@ model Diamond {
   priceTHB          Int
   priceUSD          Int
   available         Boolean             @default(true)
+  imageUrl          String?
   buildDrafts       BuildDraft[]
   inquiries         Inquiry[]
   certificates      CertificateRecord[]

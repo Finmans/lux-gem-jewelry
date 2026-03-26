@@ -1,0 +1,13 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "LUX GEM Desktop — Next.js Dev",
+      "runtimeExecutable": "/Users/finman/.bun/bin/bun",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3001,
+      "autoPort": true,
+      "cwd": "/Users/finman/Desktop/Lux Gem Jewerly"
+    }
+  ]
+}
