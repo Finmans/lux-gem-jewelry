@@ -206,3 +206,4 @@ model SiteSettings {
   description String?
   updatedAt   DateTime @updatedAt
 }
+
