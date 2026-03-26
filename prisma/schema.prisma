@@ -1,0 +1,206 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum DiamondLab {
+  GIA
+  IGI
+  HRD
+}
+
+enum InquiryType {
+  CONTACT
+  CUSTOM
+  RESERVE_DIAMOND
+  SOURCE_DIAMOND
+  BUILD_REQUEST
+  GENERAL
+}
+
+enum InquiryStatus {
+  NEW
+  REVIEWED
+  CLOSED
+}
+
+enum AppointmentStatus {
+  REQUESTED
+  CONFIRMED
+  COMPLETED
+  CANCELED
+}
+
+enum BuildDraftStatus {
+  DRAFT
+  SUBMITTED
+  ARCHIVED
+}
+
+model Collection {
+  id               String    @id @default(cuid())
+  slug             String    @unique
+  name             String
+  nameTH           String?
+  description      String
+  startingPriceTHB Int
+  pieceCount       Int
+  gradient         String?
+  products         Product[]
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model Product {
+  id           String     @id
+  slug         String     @unique
+  name         String
+  category     String
+  collectionId String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Restrict)
+  metals       String
+  centerStone  String
+  priceTHB     Int
+  priceUSD     Int
+  badge        String?
+  description  String
+  gradient     String?
+  isFeatured   Boolean    @default(false)
+  inStock      Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([collectionId])
+}
+
+model Diamond {
+  id                String              @id
+  shape             String
+  carat             Float
+  color             String
+  clarity           String
+  cut               String
+  polish            String
+  symmetry          String
+  fluorescence      String
+  lab               DiamondLab
+  certificateNumber String              @unique
+  priceTHB          Int
+  priceUSD          Int
+  available         Boolean             @default(true)
+  buildDrafts       BuildDraft[]
+  inquiries         Inquiry[]
+  certificates      CertificateRecord[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+}
+
+model Setting {
+  id           String       @id
+  slug         String       @unique
+  name         String
+  description  String?
+  metals       String
+  priceAddTHB  Int          @default(0)
+  isActive     Boolean      @default(true)
+  buildDrafts  BuildDraft[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model BuildDraft {
+  id                String           @id @default(cuid())
+  referenceCode     String           @unique
+  status            BuildDraftStatus @default(DRAFT)
+  customerName      String?
+  customerEmail     String?
+  customerPhone     String?
+  diamondId         String?
+  diamond           Diamond?         @relation(fields: [diamondId], references: [id], onDelete: SetNull)
+  settingId         String?
+  setting           Setting?         @relation(fields: [settingId], references: [id], onDelete: SetNull)
+  selectedMetal     String?
+  ringSize          String?
+  budgetMinTHB      Int?
+  budgetMaxTHB      Int?
+  notes             String?
+  estimatedPriceTHB Int?
+  inquiries         Inquiry[]
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@index([diamondId])
+  @@index([settingId])
+}
+
+model Inquiry {
+  id           String       @id @default(cuid())
+  type         InquiryType
+  status       InquiryStatus @default(NEW)
+  name         String
+  email        String
+  phone        String?
+  message      String?
+  category     String?
+  sourcePage   String?
+  budgetMinTHB Int?
+  budgetMaxTHB Int?
+  metadataJson String?
+  diamondId    String?
+  diamond      Diamond?     @relation(fields: [diamondId], references: [id], onDelete: SetNull)
+  buildDraftId String?
+  buildDraft   BuildDraft?  @relation(fields: [buildDraftId], references: [id], onDelete: SetNull)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([type])
+  @@index([diamondId])
+  @@index([buildDraftId])
+}
+
+model Appointment {
+  id               String            @id @default(cuid())
+  status           AppointmentStatus @default(REQUESTED)
+  name             String
+  email            String
+  phone            String?
+  consultationType String?
+  preferredDate    DateTime?
+  preferredTime    String?
+  notes            String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model NewsletterSubscriber {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  sourcePage String?
+  createdAt  DateTime @default(now())
+}
+
+model CertificateRecord {
+  id                String    @id @default(cuid())
+  certificateNumber String    @unique
+  lab               DiamondLab
+  diamondId         String?
+  diamond           Diamond?  @relation(fields: [diamondId], references: [id], onDelete: SetNull)
+  notes             String?
+  issuedAt          DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([diamondId])
+}
+
+model SiteSettings {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt
+}
