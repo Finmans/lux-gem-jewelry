@@ -8,8 +8,8 @@ CREATE TABLE "Collection" (
     "startingPriceTHB" INTEGER NOT NULL,
     "pieceCount" INTEGER NOT NULL,
     "gradient" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL
 );
 
 -- CreateTable
@@ -28,8 +28,8 @@ CREATE TABLE "Product" (
     "gradient" TEXT,
     "isFeatured" BOOLEAN NOT NULL DEFAULT false,
     "inStock" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "Product_collectionId_fkey" FOREIGN KEY ("collectionId") REFERENCES "Collection" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -49,8 +49,8 @@ CREATE TABLE "Diamond" (
     "priceTHB" INTEGER NOT NULL,
     "priceUSD" INTEGER NOT NULL,
     "available" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL
 );
 
 -- CreateTable
@@ -62,8 +62,8 @@ CREATE TABLE "Setting" (
     "metals" TEXT NOT NULL,
     "priceAddTHB" INTEGER NOT NULL DEFAULT 0,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL
 );
 
 -- CreateTable
@@ -82,8 +82,8 @@ CREATE TABLE "BuildDraft" (
     "budgetMaxTHB" INTEGER,
     "notes" TEXT,
     "estimatedPriceTHB" INTEGER,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "BuildDraft_diamondId_fkey" FOREIGN KEY ("diamondId") REFERENCES "Diamond" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "BuildDraft_settingId_fkey" FOREIGN KEY ("settingId") REFERENCES "Setting" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
@@ -104,8 +104,8 @@ CREATE TABLE "Inquiry" (
     "metadataJson" TEXT,
     "diamondId" TEXT,
     "buildDraftId" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "Inquiry_diamondId_fkey" FOREIGN KEY ("diamondId") REFERENCES "Diamond" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "Inquiry_buildDraftId_fkey" FOREIGN KEY ("buildDraftId") REFERENCES "BuildDraft" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
@@ -118,11 +118,11 @@ CREATE TABLE "Appointment" (
     "email" TEXT NOT NULL,
     "phone" TEXT,
     "consultationType" TEXT,
-    "preferredDate" DATETIME,
+    "preferredDate" TIMESTAMP,
     "preferredTime" TEXT,
     "notes" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL
 );
 
 -- CreateTable
@@ -130,7 +130,7 @@ CREATE TABLE "NewsletterSubscriber" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "email" TEXT NOT NULL,
     "sourcePage" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- CreateTable
@@ -140,9 +140,9 @@ CREATE TABLE "CertificateRecord" (
     "lab" TEXT NOT NULL,
     "diamondId" TEXT,
     "notes" TEXT,
-    "issuedAt" DATETIME,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "issuedAt" TIMESTAMP,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP NOT NULL,
     CONSTRAINT "CertificateRecord_diamondId_fkey" FOREIGN KEY ("diamondId") REFERENCES "Diamond" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
@@ -152,7 +152,7 @@ CREATE TABLE "SiteSettings" (
     "key" TEXT NOT NULL,
     "value" TEXT NOT NULL,
     "description" TEXT,
-    "updatedAt" DATETIME NOT NULL
+    "updatedAt" TIMESTAMP NOT NULL
 );
 
 -- CreateIndex
