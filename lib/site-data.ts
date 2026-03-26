@@ -1,9 +1,8 @@
-// Mock data for development without database
-// Set USE_MOCK_DATA=true in .env to enable
-
-const USE_MOCK = process.env.USE_MOCK_DATA === "true" ||
-  !process.env.DATABASE_URL ||
-  process.env.DATABASE_URL.startsWith("file:");
+/**
+ * Site data layer — uses Supabase JS client (via HTTPS API, works on Vercel Hobby)
+ * Falls back to mock data if Supabase is not configured
+ */
+import { supabase } from "@/lib/supabase";
 
 export type CollectionCard = {
   id: string;
@@ -291,150 +290,173 @@ const MOCK_SETTINGS: SettingRecord[] = [
   },
 ];
 
-// ─── Functions ────────────────────────────────────────────────────────────────
+// ─── Supabase Functions ───────────────────────────────────────────────────────
+
+async function sbCollections() {
+  const { data, error } = await supabase
+    .from("Collection")
+    .select("*")
+    .order("startingPriceTHB", { ascending: true });
+  if (error || !data) return null;
+  return data.map((row: Record<string, unknown>) => ({
+    id: row.id as string,
+    slug: row.slug as string,
+    name: row.name as string,
+    nameTH: (row.nameTH as string) ?? "",
+    pieceCount: row.pieceCount as number,
+    startingPriceTHB: row.startingPriceTHB as number,
+    description: row.description as string,
+    gradient: (row.gradient as string) ?? "from-[#1a1410] via-[#2d2318] to-[#1a1410]",
+  }));
+}
+
+async function sbCollectionBySlug(slug: string) {
+  const { data, error } = await supabase
+    .from("Collection")
+    .select("*")
+    .eq("slug", slug)
+    .single();
+  if (error || !data) return null;
+  return {
+    id: data.id as string,
+    slug: data.slug as string,
+    name: data.name as string,
+    nameTH: (data.nameTH as string) ?? "",
+    pieceCount: data.pieceCount as number,
+    startingPriceTHB: data.startingPriceTHB as number,
+    description: data.description as string,
+    gradient: (data.gradient as string) ?? "from-[#1a1410] via-[#2d2318] to-[#1a1410]",
+  };
+}
+
+async function sbFeaturedProducts(collectionSlug?: string) {
+  let query = supabase
+    .from("Product")
+    .select("*, Collection:collectionId(slug)")
+    .eq("isFeatured", "true");
+  const { data, error } = await query;
+  if (error || !data) return null;
+  return (data as Record<string, unknown>[])
+    .filter((row) => !collectionSlug || (row.Collection as Record<string, unknown>)?.slug === collectionSlug)
+    .map((row) => ({
+      id: row.id as string,
+      slug: row.slug as string,
+      name: row.name as string,
+      category: row.category as string,
+      collectionSlug: (row.Collection as Record<string, unknown>)?.slug as string,
+      metals: ((row.metals as string) || "").split(",").map((m: string) => m.trim()).filter(Boolean),
+      centerStone: row.centerStone as string,
+      priceTHB: row.priceTHB as number,
+      priceUSD: row.priceUSD as number,
+      badge: row.badge as string | undefined,
+      description: row.description as string,
+      gradient: (row.gradient as string) ?? "from-[#C6A878]/20 to-[#F6F1E8]/5",
+      isFeatured: row.isFeatured as boolean,
+    }));
+}
+
+async function sbDiamonds() {
+  const { data, error } = await supabase
+    .from("Diamond")
+    .select("*")
+    .order("priceTHB", { ascending: true });
+  if (error || !data) return null;
+  return (data as Record<string, unknown>[]).map((row) => ({
+    id: row.id as string,
+    shape: row.shape as string,
+    carat: row.carat as number,
+    color: row.color as string,
+    clarity: row.clarity as string,
+    cut: row.cut as string,
+    polish: row.polish as string,
+    symmetry: row.symmetry as string,
+    fluorescence: row.fluorescence as string,
+    lab: row.lab as "GIA" | "IGI" | "HRD",
+    certificate: row.certificateNumber as string,
+    priceTHB: row.priceTHB as number,
+    priceUSD: row.priceUSD as number,
+    available: row.available as boolean,
+  }));
+}
+
+async function sbDiamondById(id: string) {
+  const { data, error } = await supabase
+    .from("Diamond")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (error || !data) return null;
+  return {
+    id: data.id as string,
+    shape: data.shape as string,
+    carat: data.carat as number,
+    color: data.color as string,
+    clarity: data.clarity as string,
+    cut: data.cut as string,
+    polish: data.polish as string,
+    symmetry: data.symmetry as string,
+    fluorescence: data.fluorescence as string,
+    lab: data.lab as "GIA" | "IGI" | "HRD",
+    certificate: data.certificateNumber as string,
+    priceTHB: data.priceTHB as number,
+    priceUSD: data.priceUSD as number,
+    available: data.available as boolean,
+  };
+}
+
+async function sbSettings() {
+  const { data, error } = await supabase
+    .from("Setting")
+    .select("*")
+    .eq("isActive", "true")
+    .order("priceAddTHB", { ascending: true });
+  if (error || !data) return null;
+  return (data as Record<string, unknown>[]).map((row) => ({
+    id: row.id as string,
+    slug: row.slug as string,
+    name: row.name as string,
+    description: row.description as string | undefined,
+    metals: ((row.metals as string) || "").split(",").map((m: string) => m.trim()).filter(Boolean),
+    priceAddTHB: row.priceAddTHB as number,
+  }));
+}
+
+// ─── Public API ───────────────────────────────────────────────────────────────
 
 export async function getCollections(): Promise<CollectionCard[]> {
-  if (USE_MOCK) return MOCK_COLLECTIONS;
-  const { prisma } = await import("@/lib/prisma");
-  const rows = await prisma.collection.findMany({ orderBy: { startingPriceTHB: "asc" } });
-  return rows.map((row) => ({
-    id: row.id,
-    slug: row.slug,
-    name: row.name,
-    nameTH: row.nameTH ?? "",
-    pieceCount: row.pieceCount,
-    startingPriceTHB: row.startingPriceTHB,
-    description: row.description,
-    gradient: row.gradient ?? "from-[#1a1410] via-[#2d2318] to-[#1a1410]",
-  }));
+  const data = await sbCollections();
+  return data ?? MOCK_COLLECTIONS;
 }
 
 export async function getCollectionBySlug(slug: string): Promise<CollectionCard | null> {
-  if (USE_MOCK) return MOCK_COLLECTIONS.find((c) => c.slug === slug) ?? null;
-  const { prisma } = await import("@/lib/prisma");
-  const row = await prisma.collection.findUnique({ where: { slug } });
-  if (!row) return null;
-  return {
-    id: row.id,
-    slug: row.slug,
-    name: row.name,
-    nameTH: row.nameTH ?? "",
-    pieceCount: row.pieceCount,
-    startingPriceTHB: row.startingPriceTHB,
-    description: row.description,
-    gradient: row.gradient ?? "from-[#1a1410] via-[#2d2318] to-[#1a1410]",
-  };
+  const data = await sbCollectionBySlug(slug);
+  return data ?? MOCK_COLLECTIONS.find((c) => c.slug === slug) ?? null;
 }
 
 export async function getFeaturedProducts(collectionSlug?: string): Promise<ProductCard[]> {
-  if (USE_MOCK) {
-    return collectionSlug
+  const data = await sbFeaturedProducts(collectionSlug);
+  return data ?? (
+    collectionSlug
       ? MOCK_PRODUCTS.filter((p) => p.collectionSlug === collectionSlug && p.isFeatured)
-      : MOCK_PRODUCTS.filter((p) => p.isFeatured);
-  }
-  const { prisma } = await import("@/lib/prisma");
-  const { prisma: P } = await import("@/lib/prisma");
-  function parseStringArray(value: string): string[] {
-    try {
-      const parsed = JSON.parse(value);
-      if (Array.isArray(parsed)) return parsed.filter((item): item is string => typeof item === "string");
-    } catch { return []; }
-    return [];
-  }
-  const rows = await prisma.product.findMany({
-    where: { isFeatured: true, ...(collectionSlug ? { collection: { slug: collectionSlug } } : {}) },
-    include: { collection: true },
-    orderBy: { priceTHB: "asc" },
-  });
-  return rows.map((row) => ({
-    id: row.id,
-    slug: row.slug,
-    name: row.name,
-    category: row.category,
-    collectionSlug: row.collection.slug,
-    metals: parseStringArray(row.metals),
-    centerStone: row.centerStone,
-    priceTHB: row.priceTHB,
-    priceUSD: row.priceUSD,
-    badge: row.badge ?? undefined,
-    description: row.description,
-    gradient: row.gradient ?? "from-[#C6A878]/20 to-[#F6F1E8]/5",
-    isFeatured: row.isFeatured,
-  }));
+      : MOCK_PRODUCTS.filter((p) => p.isFeatured)
+  );
 }
 
 export async function getDiamonds(): Promise<DiamondRecord[]> {
-  if (USE_MOCK) return MOCK_DIAMONDS;
-  const { prisma } = await import("@/lib/prisma");
-  const rows = await prisma.diamond.findMany({ orderBy: [{ priceTHB: "asc" }, { id: "asc" }] });
-  return rows.map((row) => ({
-    id: row.id,
-    shape: row.shape,
-    carat: row.carat,
-    color: row.color,
-    clarity: row.clarity,
-    cut: row.cut,
-    polish: row.polish,
-    symmetry: row.symmetry,
-    fluorescence: row.fluorescence,
-    lab: row.lab,
-    certificate: row.certificateNumber,
-    priceTHB: row.priceTHB,
-    priceUSD: row.priceUSD,
-    available: row.available,
-  }));
+  const data = await sbDiamonds();
+  return data ?? MOCK_DIAMONDS;
 }
 
 export async function getDiamondById(id: string): Promise<DiamondRecord | null> {
-  if (USE_MOCK) return MOCK_DIAMONDS.find((d) => d.id === id) ?? null;
-  const { prisma } = await import("@/lib/prisma");
-  const row = await prisma.diamond.findUnique({ where: { id } });
-  if (!row) return null;
-  return {
-    id: row.id,
-    shape: row.shape,
-    carat: row.carat,
-    color: row.color,
-    clarity: row.clarity,
-    cut: row.cut,
-    polish: row.polish,
-    symmetry: row.symmetry,
-    fluorescence: row.fluorescence,
-    lab: row.lab,
-    certificate: row.certificateNumber,
-    priceTHB: row.priceTHB,
-    priceUSD: row.priceUSD,
-    available: row.available,
-  };
+  const data = await sbDiamondById(id);
+  return data ?? MOCK_DIAMONDS.find((d) => d.id === id) ?? null;
 }
 
 export async function getSettings(): Promise<SettingRecord[]> {
-  if (USE_MOCK) return MOCK_SETTINGS;
-  const { prisma } = await import("@/lib/prisma");
-  function parseStringArray(value: string): string[] {
-    try {
-      const parsed = JSON.parse(value);
-      if (Array.isArray(parsed)) return parsed.filter((item): item is string => typeof item === "string");
-    } catch { return []; }
-    return [];
-  }
-  const rows = await prisma.setting.findMany({ where: { isActive: true }, orderBy: { priceAddTHB: "asc" } });
-  return rows.map((row) => ({
-    id: row.id,
-    slug: row.slug,
-    name: row.name,
-    description: row.description ?? undefined,
-    metals: parseStringArray(row.metals),
-    priceAddTHB: row.priceAddTHB,
-  }));
+  const data = await sbSettings();
+  return data ?? MOCK_SETTINGS;
 }
 
 export async function getSiteSettings(): Promise<Record<string, string>> {
-  if (USE_MOCK) return { siteName: "LUX GEM", tagline: "Luxury Diamond Jewelry" };
-  const { prisma } = await import("@/lib/prisma");
-  const rows = await prisma.siteSettings.findMany();
-  return rows.reduce<Record<string, string>>((acc, row) => {
-    acc[row.key] = row.value;
-    return acc;
-  }, {});
+  return { siteName: "LUX GEM", tagline: "Luxury Diamond Jewelry" };
 }
