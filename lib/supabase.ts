@@ -7,3 +7,4 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Helper to check if we should use Supabase (vs mock)
 export const USE_SUPABASE = !!process.env.SUPABASE_ANON_KEY || !!process.env.NEXT_PUBLIC_SUPABASE_URL;
+// force deploy Fri Mar 27 03:11:40 +07 2026
