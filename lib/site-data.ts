@@ -46,6 +46,7 @@ export type DiamondRecord = {
   priceTHB: number;
   priceUSD: number;
   available: boolean;
+  imageUrl?: string | null;
 };
 
 export type SettingRecord = {

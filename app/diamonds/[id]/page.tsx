@@ -3,22 +3,10 @@ import { notFound } from "next/navigation";
 import { getDiamondById } from "@/lib/site-data";
 import { ReserveDiamondForm } from "@/components/forms/reserve-diamond-form";
 import { WishlistToggle } from "@/components/client/wishlist-toggle";
+import { DiamondShapeSVG } from "@/components/sections/diamond-shapes";
 
 type DiamondPageProps = {
   params: Promise<{ id: string }>;
-};
-
-const shapeIcons: Record<string, string> = {
-  Round: "◯",
-  Oval: "⬭",
-  Cushion: "▣",
-  Emerald: "▬",
-  Princess: "◻",
-  Pear: "⊙",
-  Radiant: "◈",
-  Marquise: "◇",
-  Heart: "♡",
-  Asscher: "⊠",
 };
 
 export const dynamic = "force-dynamic";
@@ -35,8 +23,12 @@ export default async function DiamondDetailPage({ params }: DiamondPageProps) {
     <main className="min-h-screen bg-[#0B0B0D] pt-20">
       <section className="border-b border-[#1A1A1E] py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[1fr_1.2fr] gap-8 items-start">
-          <div className="border border-[#1A1A1E] bg-[#0D0D10] aspect-square flex items-center justify-center text-8xl text-[#C6A878]/70">
-            {shapeIcons[diamond.shape] ?? "◇"}
+          <div className="border border-[#1A1A1E] bg-[#0D0D10] aspect-square flex items-center justify-center relative overflow-hidden">
+            {diamond.imageUrl ? (
+              <img src={diamond.imageUrl} alt={`${diamond.carat}ct ${diamond.shape}`} className="max-w-[80%] max-h-[80%] object-contain" />
+            ) : (
+              <DiamondShapeSVG shape={diamond.shape as any} size={200} className="opacity-80" />
+            )}
           </div>
           <div>
             <p className="text-[10px] tracking-[0.35em] text-[#C6A878] uppercase mb-4">Diamond Detail</p>

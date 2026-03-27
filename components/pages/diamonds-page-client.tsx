@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Shield, ArrowUpDown, X } from "lucide-react";
+import { Shield, ArrowUpDown, X, Grid2X2, List } from "lucide-react";
 import type { DiamondRecord } from "@/lib/site-data";
 import { cn } from "@/lib/utils";
+import { DiamondShapeSVG } from "@/components/sections/diamond-shapes";
 
 const shapes = [
   "Round", "Oval", "Cushion", "Emerald", "Princess",
@@ -30,6 +31,7 @@ export function DiamondsPageClient({ diamonds }: DiamondsPageClientProps) {
   const [selectedClarity, setSelectedClarity] = useState<string>("All");
   const [selectedLab, setSelectedLab] = useState<string>("All");
   const [sortBy, setSortBy] = useState<"priceAsc" | "priceDesc" | "caratDesc">("priceAsc");
+  const [view, setView] = useState<"table" | "grid">("table");
   const [page, setPage] = useState(1);
   const pageSize = 6;
   const filtered = diamonds.filter((d) => {
@@ -197,7 +199,30 @@ export function DiamondsPageClient({ diamonds }: DiamondsPageClientProps) {
             </div>
           </div>
 
-          {/* Clear */}
+          {/* View toggle */}
+          <div className="ml-auto flex items-center gap-1 border border-[#1A1A1E]">
+            <button
+              onClick={() => setView("table")}
+              className={cn(
+                "p-2 transition-colors",
+                view === "table" ? "bg-[#C6A878] text-[#0B0B0D]" : "text-[#8A8F98] hover:text-[#F6F1E8]"
+              )}
+              aria-label="Table view"
+            >
+              <List className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => setView("grid")}
+              className={cn(
+                "p-2 transition-colors",
+                view === "grid" ? "bg-[#C6A878] text-[#0B0B0D]" : "text-[#8A8F98] hover:text-[#F6F1E8]"
+              )}
+              aria-label="Grid view"
+            >
+              <Grid2X2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
           {hasFilters && (
             <button
               onClick={() => {
@@ -207,7 +232,7 @@ export function DiamondsPageClient({ diamonds }: DiamondsPageClientProps) {
                 setSelectedLab("All");
                 setPage(1);
               }}
-              className="ml-auto flex items-center gap-1 text-[10px] tracking-[0.15em] text-[#8A8F98] hover:text-[#C6A878] uppercase transition-colors"
+              className="flex items-center gap-1 text-[10px] tracking-[0.15em] text-[#8A8F98] hover:text-[#C6A878] uppercase transition-colors"
             >
               <X className="w-3 h-3" /> Clear filters
             </button>
@@ -238,6 +263,7 @@ export function DiamondsPageClient({ diamonds }: DiamondsPageClientProps) {
         </div>
 
         {/* Diamond table */}
+        {view === "table" ? (
         <div className="border border-[#1A1A1E]">
           {/* Table header */}
           <div className="hidden md:grid grid-cols-[50px_70px_1fr_70px_60px_80px_70px_80px_120px] gap-3 px-5 py-3 border-b border-[#1A1A1E] bg-[#080809]">
@@ -302,31 +328,115 @@ export function DiamondsPageClient({ diamonds }: DiamondsPageClientProps) {
               ))
             )}
           </AnimatePresence>
+          {totalPages > 1 ? (
+            <div className="mt-4 flex items-center justify-between text-xs text-[#8A8F98]">
+              <p>Page {currentPage} of {totalPages}</p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1 border border-[#2A2A30] disabled:opacity-40"
+                >
+                  Previous
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1 border border-[#2A2A30] disabled:opacity-40"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          ) : null}
         </div>
-
-        {totalPages > 1 ? (
-          <div className="mt-4 flex items-center justify-between text-xs text-[#8A8F98]">
-            <p>Page {currentPage} of {totalPages}</p>
-            <div className="flex gap-2">
+        ) : (
+        /* GRID VIEW */
+        <div>
+          {filtered.length === 0 ? (
+            <div className="py-20 text-center">
+              <p className="text-[#8A8F98] font-light">No diamonds match your filters.</p>
               <button
-                type="button"
-                onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-                disabled={currentPage === 1}
-                className="px-3 py-1 border border-[#2A2A30] disabled:opacity-40"
+                onClick={() => {
+                  setSelectedShape("All");
+                  setSelectedColor("All");
+                  setSelectedClarity("All");
+                  setSelectedLab("All");
+                  setPage(1);
+                }}
+                className="mt-4 text-[#C6A878] text-sm underline underline-offset-4"
               >
-                Previous
-              </button>
-              <button
-                type="button"
-                onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
-                disabled={currentPage === totalPages}
-                className="px-3 py-1 border border-[#2A2A30] disabled:opacity-40"
-              >
-                Next
+                Clear filters
               </button>
             </div>
+          ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {paginated.map((d, i) => (
+              <motion.div
+                key={d.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.06 }}
+              >
+                <Link
+                  href={`/diamonds/${d.id}`}
+                  className="group block border border-[#1A1A1E] hover:border-[#C6A878]/40 transition-all duration-300"
+                >
+                  {/* Diamond image */}
+                  <div className="aspect-square bg-[#0D0D10] flex items-center justify-center p-8 relative overflow-hidden">
+                    {d.imageUrl ? (
+                      <img src={d.imageUrl} alt={`${d.carat}ct ${d.shape}`} className="max-w-full max-h-full object-contain" />
+                    ) : (
+                      <DiamondShapeSVG shape={d.shape as any} size={100} className="opacity-80 group-hover:opacity-100 transition-opacity" />
+                    )}
+                    {/* Shape badge */}
+                    <div className="absolute top-3 left-3 px-2 py-1 bg-[#1A1A1E]/80 backdrop-blur text-[9px] tracking-[0.15em] text-[#8A8F98] uppercase">
+                      {d.shape}
+                    </div>
+                    {/* Lab badge */}
+                    <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-[#1A1A1E]/80 backdrop-blur">
+                      <Shield className="w-3 h-3 text-[#C6A878]/60" />
+                      <span className="text-[9px] tracking-[0.1em] text-[#C6A878]">{d.lab}</span>
+                    </div>
+                  </div>
+                  {/* Info */}
+                  <div className="p-4 bg-[#0D0D10]">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="text-lg text-[#F6F1E8] font-light">{d.carat}ct</p>
+                        <p className="text-[10px] text-[#8A8F98]/60 font-mono">#{d.certificate}</p>
+                      </div>
+                      <p className="text-lg text-[#C6A878] font-light">฿{d.priceTHB.toLocaleString()}</p>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-center">
+                      <div className="bg-[#111115] px-2 py-2">
+                        <p className="text-[9px] text-[#8A8F98]/50 uppercase tracking-wider">Color</p>
+                        <p className="text-xs text-[#F6F1E8] mt-0.5">{d.color}</p>
+                      </div>
+                      <div className="bg-[#111115] px-2 py-2">
+                        <p className="text-[9px] text-[#8A8F98]/50 uppercase tracking-wider">Clarity</p>
+                        <p className="text-xs text-[#C6A878] mt-0.5">{d.clarity}</p>
+                      </div>
+                      <div className="bg-[#111115] px-2 py-2">
+                        <p className="text-[9px] text-[#8A8F98]/50 uppercase tracking-wider">Cut</p>
+                        <p className="text-xs text-[#F6F1E8] mt-0.5">{d.cut}</p>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
           </div>
-        ) : null}
+          )}
+          {totalPages > 1 && (
+            <div className="mt-6 flex items-center justify-center text-xs text-[#8A8F98]">
+              <p>Page {currentPage} of {totalPages} — {filtered.length} diamonds</p>
+            </div>
+          )}
+        </div>
+        )}
 
         {/* Bottom CTA */}
         <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-[#1A1A1E]">
