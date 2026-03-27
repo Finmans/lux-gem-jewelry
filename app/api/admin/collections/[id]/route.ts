@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export const dynamic = "force-dynamic";
-
 type Params = { params: Promise<{ id: string }> };
 
 export async function GET(req: NextRequest, { params }: Params) {
   try {
     const { id } = await params;
-    const diamond = await prisma.diamond.findUnique({ where: { id } });
-    if (!diamond) {
-      return NextResponse.json({ error: "Diamond not found" }, { status: 404 });
+    const collection = await prisma.collection.findUnique({
+      where: { id },
+      include: { products: true },
+    });
+    if (!collection) {
+      return NextResponse.json({ error: "Collection not found" }, { status: 404 });
     }
-    return NextResponse.json(diamond);
+    return NextResponse.json(collection);
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 });
   }
@@ -22,26 +23,19 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   try {
     const { id } = await params;
     const body = await req.json();
-    const diamond = await prisma.diamond.update({
+    const collection = await prisma.collection.update({
       where: { id },
       data: {
-        shape: body.shape,
-        carat: body.carat,
-        color: body.color,
-        clarity: body.clarity,
-        cut: body.cut,
-        polish: body.polish,
-        symmetry: body.symmetry,
-        fluorescence: body.fluorescence,
-        lab: body.lab,
-        certificateNumber: body.certificateNumber,
-        priceTHB: body.priceTHB,
-        priceUSD: body.priceUSD,
-        available: body.available,
-        imageUrl: body.imageUrl ?? null,
+        slug: body.slug,
+        name: body.name,
+        nameTH: body.nameTH,
+        description: body.description,
+        startingPriceTHB: body.startingPriceTHB,
+        pieceCount: body.pieceCount,
+        gradient: body.gradient,
       },
     });
-    return NextResponse.json(diamond);
+    return NextResponse.json(collection);
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 });
   }
@@ -50,7 +44,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 export async function DELETE(req: NextRequest, { params }: Params) {
   try {
     const { id } = await params;
-    await prisma.diamond.delete({ where: { id } });
+    await prisma.collection.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 });

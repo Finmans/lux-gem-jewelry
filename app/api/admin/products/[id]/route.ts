@@ -1,33 +1,45 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export const dynamic = "force-dynamic";
+type Params = { params: Promise<{ id: string }> };
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: NextRequest, { params }: Params) {
+  try {
+    const { id } = await params;
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: { collection: true },
+    });
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+    return NextResponse.json(product);
+  } catch (err) {
+    return NextResponse.json({ error: String(err) }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: NextRequest, { params }: Params) {
   try {
     const { id } = await params;
     const body = await req.json();
     const product = await prisma.product.update({
       where: { id },
       data: {
-        name:        body.name,
-        category:    body.category,
+        slug: body.slug,
+        name: body.name,
+        category: body.category,
         collectionId: body.collectionId,
-        metals:      Array.isArray(body.metals) ? body.metals.join(", ") : body.metals,
-        centerStone: body.centerStone ?? "",
-        priceTHB:    body.priceTHB,
-        priceUSD:    body.priceUSD,
-        badge:       body.badge || null,
-        description: body.description ?? "",
-        gradient:    body.gradient ?? null,
-        imageUrl:    body.imageUrl ?? null,
-        isFeatured:  body.isFeatured ?? false,
-        inStock:     body.inStock ?? true,
+        metals: body.metals ? JSON.stringify(body.metals) : undefined,
+        centerStone: body.centerStone,
+        priceTHB: body.priceTHB,
+        priceUSD: body.priceUSD,
+        badge: body.badge,
+        description: body.description,
+        gradient: body.gradient,
+        isFeatured: body.isFeatured,
+        inStock: body.inStock,
       },
-      include: { collection: { select: { name: true, slug: true } } },
     });
     return NextResponse.json(product);
   } catch (err) {
@@ -35,14 +47,11 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(req: NextRequest, { params }: Params) {
   try {
     const { id } = await params;
     await prisma.product.delete({ where: { id } });
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ success: true });
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 });
   }
