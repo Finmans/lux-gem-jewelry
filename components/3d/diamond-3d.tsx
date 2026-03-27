@@ -1,21 +1,15 @@
 "use client";
 
-import { useRef, useMemo, useEffect, Suspense } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { useRef, useMemo, useEffect, Suspense, useCallback } from "react";
+import { Canvas, useFrame, invalidate } from "@react-three/fiber";
 import { OrbitControls, useEnvironment, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 
 // ── Physical diamond material ─────────────────────────────
-// Key insight: envMap is set directly on the material (not via scene.environment).
-// This means specular/IBL reflections work, but the transmission pass
-// refracts scene.background (dark) instead of the bright HDRI.
-// Result: transparent dark interior + colorful specular fire.
 function DiamondModel({ isDragging }: { isDragging: React.MutableRefObject<boolean> }) {
   const { scene } = useGLTF("/pure_diamond.glb");
   const groupRef  = useRef<THREE.Group>(null);
 
-  // Load HDRI but do NOT attach it to scene.environment
-  // (attaching to scene.environment would make transmission refract the bright HDRI = white blob)
   const envMap = useEnvironment({ preset: "studio" });
 
   const material = useMemo(
@@ -61,11 +55,28 @@ function DiamondModel({ isDragging }: { isDragging: React.MutableRefObject<boole
     });
   }, [scene, material]);
 
-  useFrame((_, delta) => {
-    if (!isDragging.current && groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.28;
-    }
-  });
+  // Throttled RAF: rotate + invalidate at ~24fps
+  useEffect(() => {
+    const TARGET_FPS = 24;
+    const interval = 1000 / TARGET_FPS; // ~41.67ms
+    let lastTime = 0;
+    let rafId: number;
+
+    const loop = (time: number) => {
+      if (time - lastTime >= interval) {
+        lastTime = time - ((time - lastTime) % interval);
+        if (!isDragging.current && groupRef.current) {
+          // ~0.28 rad/s → scale by ratio of TARGET_FPS/60 for correct speed
+          groupRef.current.rotation.y += (interval / 1000) * 0.28;
+          invalidate(); // tell Canvas to render this frame
+        }
+      }
+      rafId = requestAnimationFrame(loop);
+    };
+
+    rafId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(rafId);
+  }, []);
 
   return (
     <group ref={groupRef} rotation={[0.35, 0, 0]}>
@@ -76,7 +87,7 @@ function DiamondModel({ isDragging }: { isDragging: React.MutableRefObject<boole
 
 useGLTF.preload("/pure_diamond.glb");
 
-// ── Canvas props shared between both exports ───────────────
+// ── Shared Canvas config ──────────────────────────────────
 const CANVAS_GLSL = {
   antialias:           true,
   alpha:               false,
@@ -90,7 +101,6 @@ const CAMERA = { position: [0, 0.4, 4.0] as [number, number, number], fov: 38 };
 const SCENE_LIGHTS = (
   <>
     <color attach="background" args={["#060810"]} />
-    {/* Reduced from 11 to 4 lights — transmission materials recalculate per light */}
     <ambientLight intensity={0.08} />
     <directionalLight position={[3,  8,  4]} intensity={6}   color="#ffffff" />
     <directionalLight position={[-3, 4, -4]} intensity={4}   color="#a0c8ff" />
@@ -98,18 +108,7 @@ const SCENE_LIGHTS = (
   </>
 );
 
-const ORBIT_CONTROLS = (
-  <OrbitControls
-    enableZoom={false}
-    enablePan={false}
-    enableDamping
-    dampingFactor={0.08}
-    minPolarAngle={Math.PI * 0.05}
-    maxPolarAngle={Math.PI * 0.9}
-  />
-);
-
-// ── Default: always render (for pages that need constant animation) ──
+// ── Default: always render at native refresh rate ──────────
 export function Diamond3D() {
   const isDragging = useRef(false);
 
@@ -124,13 +123,23 @@ export function Diamond3D() {
       <Suspense fallback={null}>
         <DiamondModel isDragging={isDragging} />
       </Suspense>
-      {ORBIT_CONTROLS}
+      <OrbitControls
+        enableZoom={false}
+        enablePan={false}
+        enableDamping
+        dampingFactor={0.08}
+        minPolarAngle={Math.PI * 0.05}
+        maxPolarAngle={Math.PI * 0.9}
+        onStart={() => { isDragging.current = true; }}
+        onEnd={()   => { isDragging.current = false; }}
+      />
     </Canvas>
   );
 }
 
-// ── Hero / static pages: demand-loop = only re-render on interaction ──
-// Fixes GPU stall from ReadPixels by eliminating continuous render loop.
+// ── Hero: demand-loop with 24fps RAF rotation ─────────────
+// GPU renders only when invalidate() is called (~24 times/sec)
+// No continuous 60fps render loop → eliminates GPU stalls
 export function Diamond3DDemand() {
   const isDragging = useRef(false);
 
