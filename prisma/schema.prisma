@@ -8,9 +8,7 @@ datasource db {
 }
 
 enum DiamondLab {
-  GIA
   IGI
-  HRD
 }
 
 enum InquiryType {

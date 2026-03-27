@@ -109,7 +109,7 @@ export function DiamondStockPreviewSection({ diamonds }: DiamondStockPreviewSect
               <em className="not-italic text-[#C6A878]">perfect stone</em>
             </h2>
             <p className="mt-4 text-sm text-[#8A8F98] font-light max-w-md leading-relaxed">
-              Every diamond in our stock is individually selected, GIA or IGI certified,
+              Every diamond in our stock is individually selected, IGI certified,
               and ready for immediate setting.
             </p>
           </div>
@@ -229,7 +229,7 @@ export function DiamondStockPreviewSection({ diamonds }: DiamondStockPreviewSect
               <span className="text-[#C6A878]">{diamonds.length}</span> certified diamonds
             </motion.p>
             <div className="w-1 h-1 rotate-45 bg-[#C6A878]/30" />
-            <p className="text-[10px] text-[#8A8F98]/50">GIA · IGI · HRD</p>
+            <p className="text-[10px] text-[#8A8F98]/50">IGI</p>
           </div>
           <div className="flex gap-3">
             <Link

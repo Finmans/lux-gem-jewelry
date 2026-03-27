@@ -251,7 +251,7 @@ export function BrandStorySection({ diamondCount }: BrandStorySectionProps) {
                       transition={{ duration: 0.6, delay: 0.45 }}
                       className="font-display text-3xl font-light text-[#C6A878]"
                     >
-                      GIA
+                      IGI
                     </motion.p>
                     <p className="text-[9px] tracking-[0.2em] text-[#8A8F98] uppercase mt-0.5">Certified · IGI</p>
                   </div>

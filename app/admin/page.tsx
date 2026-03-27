@@ -199,7 +199,7 @@ export default function AdminDashboard() {
           {/* Summary */}
           <div className="bg-[#0d1117] border border-white/[0.06] rounded-xl p-6">
             <h2 className="font-serif text-lg text-[#F6F1E8] mb-4">Lab Breakdown</h2>
-            {(["GIA", "IGI", "HRD"] as const).map((lab) => {
+            (["IGI"] as const).map((lab) => {
               const count = diamonds.filter((d) => d.lab === lab).length;
               const pct = dStats.total > 0 ? (count / dStats.total) * 100 : 0;
               return (

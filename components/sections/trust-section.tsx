@@ -21,7 +21,7 @@ const trustPoints = [
   },
   {
     Icon: Award,
-    title: "GIA & IGI Certified",
+    title: "IGI Certified",
     description:
       "Every diamond over 0.30ct ships with its official grading certificate from the world's leading gemological labs.",
   },

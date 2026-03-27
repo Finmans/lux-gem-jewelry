@@ -408,7 +408,7 @@ export function LuxHeroSection({ diamondCount }: LuxHeroSectionProps) {
               transition={{ duration: 0.7, delay: 0.45 }}
               className="flex items-center gap-6 mt-10 pt-8 border-t border-[#1A1A1E]">
                 {[
-                  { value: "GIA / IGI", label: "Certified" },
+                  { value: "IGI", label: "Certified" },
                   { value: `${diamondCount}`, label: "Diamonds in stock" },
                   { value: "30-Day", label: "Returns" },
                 ].map((stat, i) => (
@@ -618,7 +618,7 @@ export function LuxHeroSection({ diamondCount }: LuxHeroSectionProps) {
                 transition={{ delay: 2.0, duration: 0.7 }}
                 className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-3 bg-[#0D0D10]/95 border border-[#2A2A30] px-4 py-2 shadow-2xl backdrop-blur-sm"
               >
-                <p className="text-[9px] tracking-[0.25em] text-[#8A8F98] uppercase text-center">GIA Certified</p>
+                <p className="text-[9px] tracking-[0.25em] text-[#8A8F98] uppercase text-center">IGI Certified</p>
               </motion.div>
             </motion.div>
           </div>

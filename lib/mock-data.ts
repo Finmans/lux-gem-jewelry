@@ -22,7 +22,7 @@ export interface Diamond {
   polish: string;
   symmetry: string;
   fluorescence: string;
-  lab: "GIA" | "IGI" | "HRD";
+  lab: "IGI";
   certificate: string;
   priceTHB: number;
   priceUSD: number;
@@ -65,7 +65,7 @@ export const diamonds: Diamond[] = [
     polish: "Excellent",
     symmetry: "Excellent",
     fluorescence: "None",
-    lab: "GIA",
+    lab: "IGI",
     certificate: "2387654321",
     priceTHB: 318000,
     priceUSD: 9100,
@@ -113,7 +113,7 @@ export const diamonds: Diamond[] = [
     polish: "Excellent",
     symmetry: "Excellent",
     fluorescence: "None",
-    lab: "GIA",
+    lab: "IGI",
     certificate: "7654321089",
     priceTHB: 590000,
     priceUSD: 16860,
@@ -145,7 +145,7 @@ export const diamonds: Diamond[] = [
     polish: "Excellent",
     symmetry: "Excellent",
     fluorescence: "None",
-    lab: "GIA",
+    lab: "IGI",
     certificate: "5432109876",
     priceTHB: 785000,
     priceUSD: 22430,
@@ -360,7 +360,7 @@ export const testimonials = [
     nameEN: "Thanakorn P.",
     role: "Gift Purchase",
     quote:
-      "ซื้อสร้อยคอเป็นของขวัญให้แฟน คุณภาพระดับนี้ราคายุติธรรมมากครับ GIA cert ทำให้มั่นใจมาก บริการก็ดีมากตั้งแต่ต้นจนจบ",
+      "ซื้อสร้อยคอเป็นของขวัญให้แฟน คุณภาพระดับนี้ราคายุติธรรมมากครับ IGI cert ทำให้มั่นใจมาก บริการก็ดีมากตั้งแต่ต้นจนจบ",
     rating: 5,
     ring: "Lumière Pendant 1.0ct E VS1",
   },
@@ -377,7 +377,7 @@ export const testimonials = [
 
 // ── Certifications & Trust ────────────────────────────────
 export const certifications = [
-  { name: "GIA Certified", description: "Gemological Institute of America" },
+  { name: "IGI Certified", description: "Gemological Institute of America" },
   { name: "IGI Certified", description: "International Gemological Institute" },
   { name: "HRD Antwerp", description: "HRD Antwerp Diamond Grading" },
 ];
@@ -397,6 +397,6 @@ export const trustPoints = [
   },
   {
     title: "Diamond Certificate",
-    description: "Every diamond over 0.30ct ships with its official GIA or IGI grading certificate.",
+    description: "Every diamond over 0.30ct ships with its official IGI grading certificate.",
   },
 ];

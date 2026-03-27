@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 // ── Types ─────────────────────────────────────────────────
 
-type DiamondLab = "GIA" | "IGI" | "HRD";
+type DiamondLab = "IGI";
 
 type Diamond = {
   id: string;
@@ -45,7 +45,7 @@ const COLORS    = ["D","E","F","G","H","I","J"];
 const CLARITIES = ["IF","VVS1","VVS2","VS1","VS2","SI1","SI2"];
 const GRADES    = ["Excellent","Very Good","Good","Fair"];
 const FLUORS    = ["None","Faint","Medium","Strong","Very Strong"];
-const LABS: DiamondLab[] = ["GIA","IGI","HRD"];
+const LABS: DiamondLab[] = ["IGI"];
 
 const SHAPE_ICON: Record<string, string> = {
   Round:"◯",Oval:"⬭",Cushion:"⬜",Princess:"◻",
@@ -62,7 +62,7 @@ const EMPTY_FORM: DiamondFormData = {
   polish: "Excellent",
   symmetry: "Excellent",
   fluorescence: "None",
-  lab: "GIA",
+  lab: "IGI",
   certificateNumber: "",
   priceTHB: 0,
   priceUSD: 0,

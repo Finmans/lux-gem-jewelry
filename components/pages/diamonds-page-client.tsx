@@ -18,7 +18,7 @@ const shapeIcons: Record<string, string> = {
 };
 const colors = ["D", "E", "F", "G", "H", "I"];
 const clarities = ["IF", "VVS1", "VVS2", "VS1", "VS2", "SI1", "SI2"];
-const labs = ["GIA", "IGI", "HRD"];
+const labs = ["IGI"];
 
 type DiamondsPageClientProps = {
   diamonds: DiamondRecord[];

@@ -41,7 +41,7 @@ export type DiamondRecord = {
   polish: string;
   symmetry: string;
   fluorescence: string;
-  lab: "GIA" | "IGI" | "HRD";
+  lab: "IGI";
   certificate: string;
   priceTHB: number;
   priceUSD: number;
@@ -117,7 +117,7 @@ const MOCK_DIAMONDS: DiamondRecord[] = [
     polish: "Very Good",
     symmetry: "Excellent",
     fluorescence: "None",
-    lab: "GIA",
+    lab: "IGI",
     certificate: "1234567890",
     priceTHB: 95000,
     priceUSD: 2710,
@@ -238,7 +238,7 @@ async function dbDiamonds(): Promise<DiamondRecord[]> {
       polish: d.polish,
       symmetry: d.symmetry,
       fluorescence: d.fluorescence,
-      lab: d.lab as "GIA" | "IGI" | "HRD",
+      lab: d.lab as "IGI",
       certificate: d.certificateNumber,
       priceTHB: d.priceTHB,
       priceUSD: d.priceUSD,
@@ -264,7 +264,7 @@ async function dbDiamondById(id: string): Promise<DiamondRecord | null> {
       polish: d.polish,
       symmetry: d.symmetry,
       fluorescence: d.fluorescence,
-      lab: d.lab as "GIA" | "IGI" | "HRD",
+      lab: d.lab as "IGI",
       certificate: d.certificateNumber,
       priceTHB: d.priceTHB,
       priceUSD: d.priceUSD,
