@@ -76,41 +76,81 @@ function DiamondModel({ isDragging }: { isDragging: React.MutableRefObject<boole
 
 useGLTF.preload("/pure_diamond.glb");
 
+// ── Canvas props shared between both exports ───────────────
+const CANVAS_GLSL = {
+  antialias:           true,
+  alpha:               false,
+  toneMapping:         THREE.ACESFilmicToneMapping,
+  toneMappingExposure: 1.6,
+  powerPreference:     "high-performance" as const,
+};
+
+const CAMERA = { position: [0, 0.4, 4.0] as [number, number, number], fov: 38 };
+
+const SCENE_LIGHTS = (
+  <>
+    <color attach="background" args={["#060810"]} />
+    <ambientLight intensity={0.05} />
+    <directionalLight position={[2,   8,  4]}  intensity={5}   color="#ffffff" />
+    <directionalLight position={[-2,  5,  5]}  intensity={3.5} color="#f0f8ff" />
+    <directionalLight position={[4,   4,  3]}  intensity={3}   color="#ffffff" />
+    <directionalLight position={[5,   1,  1]}  intensity={3.5} color="#60b8ff" />
+    <directionalLight position={[0,   0, -7]}  intensity={3}   color="#90c8ff" />
+    <directionalLight position={[-4,  2,  4]}  intensity={3}   color="#ffd060" />
+    <directionalLight position={[0,  -5,  2]}  intensity={2}   color="#ffe0a0" />
+    <directionalLight position={[-2,  4, -5]}  intensity={2.5} color="#c060ff" />
+    <pointLight position={[0, 1.5, 2.5]} intensity={4} color="#ffffff" distance={10} />
+  </>
+);
+
+const ORBIT_CONTROLS = (
+  <OrbitControls
+    enableZoom={false}
+    enablePan={false}
+    enableDamping
+    dampingFactor={0.08}
+    minPolarAngle={Math.PI * 0.05}
+    maxPolarAngle={Math.PI * 0.9}
+  />
+);
+
+// ── Default: always render (for pages that need constant animation) ──
 export function Diamond3D() {
   const isDragging = useRef(false);
 
   return (
     <Canvas
-      gl={{
-        antialias:           true,
-        alpha:               false,
-        toneMapping:         THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.6,
-      }}
-      camera={{ position: [0, 0.4, 4.0], fov: 38 }}
+      gl={CANVAS_GLSL}
+      camera={CAMERA}
       dpr={[1, 1.5]}
       style={{ width: "100%", height: "100%", borderRadius: "50%" }}
     >
-      {/* Dark scene background — transmission refracts this (not the bright HDRI) */}
-      {/* This is what makes the diamond look transparent instead of solid white */}
-      <color attach="background" args={["#060810"]} />
-
-      {/* Jewelry light rig — colored lights simulate chromatic dispersion */}
-      <ambientLight intensity={0.05} />
-      <directionalLight position={[2,   8,  4]}  intensity={5}   color="#ffffff" />
-      <directionalLight position={[-2,  5,  5]}  intensity={3.5} color="#f0f8ff" />
-      <directionalLight position={[4,   4,  3]}  intensity={3}   color="#ffffff" />
-      <directionalLight position={[5,   1,  1]}  intensity={3.5} color="#60b8ff" />
-      <directionalLight position={[0,   0, -7]}  intensity={3}   color="#90c8ff" />
-      <directionalLight position={[-4,  2,  4]}  intensity={3}   color="#ffd060" />
-      <directionalLight position={[0,  -5,  2]}  intensity={2}   color="#ffe0a0" />
-      <directionalLight position={[-2,  4, -5]}  intensity={2.5} color="#c060ff" />
-      <pointLight position={[0, 1.5, 2.5]} intensity={4} color="#ffffff" distance={10} />
-
+      {SCENE_LIGHTS}
       <Suspense fallback={null}>
         <DiamondModel isDragging={isDragging} />
       </Suspense>
+      {ORBIT_CONTROLS}
+    </Canvas>
+  );
+}
 
+// ── Hero / static pages: demand-loop = only re-render on interaction ──
+// Fixes GPU stall from ReadPixels by eliminating continuous render loop.
+export function Diamond3DDemand() {
+  const isDragging = useRef(false);
+
+  return (
+    <Canvas
+      gl={CANVAS_GLSL}
+      camera={CAMERA}
+      dpr={[1, 1.5]}
+      style={{ width: "100%", height: "100%", borderRadius: "50%" }}
+      frameloop="demand"
+    >
+      {SCENE_LIGHTS}
+      <Suspense fallback={null}>
+        <DiamondModel isDragging={isDragging} />
+      </Suspense>
       <OrbitControls
         enableZoom={false}
         enablePan={false}

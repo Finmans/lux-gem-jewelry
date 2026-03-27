@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 
 // Dynamic import — no SSR, show the SVG diamond while the 3D bundle loads
 const Diamond3DLazy = dynamic(
-  () => import("@/components/3d/diamond-3d").then((m) => m.Diamond3D),
+  () => import("@/components/3d/diamond-3d").then((m) => m.Diamond3DDemand),
   {
     ssr: false,
     loading: () => (
