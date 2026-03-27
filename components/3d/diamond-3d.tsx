@@ -90,16 +90,11 @@ const CAMERA = { position: [0, 0.4, 4.0] as [number, number, number], fov: 38 };
 const SCENE_LIGHTS = (
   <>
     <color attach="background" args={["#060810"]} />
-    <ambientLight intensity={0.05} />
-    <directionalLight position={[2,   8,  4]}  intensity={5}   color="#ffffff" />
-    <directionalLight position={[-2,  5,  5]}  intensity={3.5} color="#f0f8ff" />
-    <directionalLight position={[4,   4,  3]}  intensity={3}   color="#ffffff" />
-    <directionalLight position={[5,   1,  1]}  intensity={3.5} color="#60b8ff" />
-    <directionalLight position={[0,   0, -7]}  intensity={3}   color="#90c8ff" />
-    <directionalLight position={[-4,  2,  4]}  intensity={3}   color="#ffd060" />
-    <directionalLight position={[0,  -5,  2]}  intensity={2}   color="#ffe0a0" />
-    <directionalLight position={[-2,  4, -5]}  intensity={2.5} color="#c060ff" />
-    <pointLight position={[0, 1.5, 2.5]} intensity={4} color="#ffffff" distance={10} />
+    {/* Reduced from 11 to 4 lights — transmission materials recalculate per light */}
+    <ambientLight intensity={0.08} />
+    <directionalLight position={[3,  8,  4]} intensity={6}   color="#ffffff" />
+    <directionalLight position={[-3, 4, -4]} intensity={4}   color="#a0c8ff" />
+    <directionalLight position={[0, -4,  3]} intensity={3}   color="#ffe0a0" />
   </>
 );
 
