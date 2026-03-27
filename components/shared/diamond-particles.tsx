@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 // Pre-computed to avoid SSR/hydration mismatch
@@ -55,19 +54,6 @@ function MicroDiamond({ size, opacity }: { size: number; opacity: number }) {
 }
 
 export function DiamondParticles() {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    setIsDark(document.documentElement.classList.contains("dark"));
-    const observer = new MutationObserver(() => {
-      setIsDark(document.documentElement.classList.contains("dark"));
-    });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-    return () => observer.disconnect();
-  }, []);
-
-  if (!isDark) return null;
-
   return (
     <div
       className="fixed inset-0 pointer-events-none overflow-hidden"
