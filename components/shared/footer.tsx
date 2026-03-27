@@ -46,20 +46,20 @@ const socials = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-[#2A2A30] bg-[#080809]">
+    <footer className="border-t dark:border-[#2A2A30] border-neutral-200 dark:bg-[#080809] bg-neutral-50">
       {/* Top band */}
-      <div className="border-b border-[#1A1A1E] py-12">
+      <div className="border-b dark:border-[#1A1A1E] border-neutral-200 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
             {/* Brand */}
             <div className="max-w-xs">
-              <p className="font-display text-2xl font-light tracking-[0.3em] text-[#F6F1E8]">
+              <p className="font-display text-2xl font-light tracking-[0.3em] dark:text-[#F6F1E8] text-neutral-900">
                 LUX GEM
               </p>
-              <p className="text-[9px] tracking-[0.4em] text-[#8A8F98] uppercase mt-0.5 mb-4">
+              <p className="text-[9px] tracking-[0.4em] dark:text-[#8A8F98] text-neutral-500 uppercase mt-0.5 mb-4">
                 Jewelry Co., Ltd.
               </p>
-              <p className="text-sm text-[#8A8F98] leading-relaxed font-light">
+              <p className="text-sm dark:text-[#8A8F98] text-neutral-600 leading-relaxed font-light">
                 Lab-grown diamonds of exceptional beauty. Crafting timeless pieces
                 with modern transparency and uncompromising precision.
               </p>
@@ -71,7 +71,7 @@ export function Footer() {
                 Join our inner circle
               </p>
               <NewsletterForm sourcePage="footer" />
-              <p className="text-xs text-[#8A8F98]/60 mt-2">
+              <p className="text-xs dark:text-[#8A8F98]/60 text-neutral-400 mt-2">
                 Exclusive collections, events & diamond education.
               </p>
             </div>
@@ -93,7 +93,7 @@ export function Footer() {
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="text-sm text-[#8A8F98] hover:text-[#F6F1E8] transition-colors font-light"
+                        className="text-sm dark:text-[#8A8F98] text-neutral-600 hover:dark:text-[#F6F1E8] hover:text-neutral-900 transition-colors font-light"
                       >
                         {link.label}
                       </Link>
@@ -107,9 +107,9 @@ export function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-[#1A1A1E] py-6">
+      <div className="border-t dark:border-[#1A1A1E] border-neutral-200 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-[#8A8F98]/60 font-light">
+          <p className="text-xs dark:text-[#8A8F98]/60 text-neutral-500 font-light">
             © 2024 บริษัท ลักซ์เจมส์จิวเวลรี่ จำกัด / LUX GEM JEWELRY CO., LTD.
             All rights reserved.
           </p>
@@ -119,7 +119,7 @@ export function Footer() {
                 key={label}
                 href={href}
                 aria-label={label}
-                className="w-8 h-8 flex items-center justify-center border border-[#2A2A30] text-[#8A8F98] hover:border-[#C6A878]/50 hover:text-[#C6A878] transition-all duration-300"
+                className="w-8 h-8 flex items-center justify-center border dark:border-[#2A2A30] border-neutral-300 dark:text-[#8A8F98] text-neutral-500 dark:hover:border-[#C6A878]/50 dark:hover:text-[#C6A878] hover:border-[#C6A878] hover:text-[#C6A878] transition-all duration-300"
               >
                 <Icon className="w-3.5 h-3.5" />
               </a>
