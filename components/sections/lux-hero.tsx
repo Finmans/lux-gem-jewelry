@@ -1,10 +1,8 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, ChevronDown } from "lucide-react";
-import { GemSparkle } from "@/components/ui/gem-sparkle";
 
 const CONTENT = {
   en: {
@@ -37,16 +35,134 @@ const CONTENT = {
   },
 };
 
-// ── 2D SVG Diamond — pure flat CSS rotation ──
-function DiamondHero() {
-  return (
-    <div className="diamond-2d-spin w-full h-full flex items-center justify-center">
-      <DiamondGem />
-    </div>
-  );
+// ── Inject global keyframes once ──────────────────────────────
+function injectHeroStyles() {
+  if (typeof document === "undefined") return;
+  if (document.getElementById("lux-hero-styles")) return;
+
+  const s = document.createElement("style");
+  s.id = "lux-hero-styles";
+  s.textContent = `
+    /* ── Aurora bands ─────────────────────────────────────── */
+    @keyframes aurora-pulse {
+      0%,100% { opacity: 0.4; transform: rotate(var(--rot)) scaleX(1.4) translateY(0); }
+      25%      { opacity: 1;   transform: rotate(var(--rot)) scaleX(1.6) translateY(-15px); }
+      50%      { opacity: 0.6; transform: rotate(var(--rot)) scaleX(1.3) translateY(8px); }
+      75%      { opacity: 1;   transform: rotate(var(--rot)) scaleX(1.5) translateY(-5px); }
+    }
+    .aurora-band {
+      animation: aurora-pulse var(--dur) ease-in-out var(--delay) infinite;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+    }
+
+    /* ── Bokeh blobs ───────────────────────────────────────── */
+    @keyframes bokeh-drift {
+      0%,100% { transform: translate(-50%,-50%) translate(0,0) scale(1);     opacity: var(--base-o); }
+      25%      { transform: translate(-50%,-50%) translate(30px,-40px) scale(1.15); opacity: calc(var(--base-o) * 1.4); }
+      50%      { transform: translate(-50%,-50%) translate(-20px,20px) scale(0.9);  opacity: calc(var(--base-o) * 0.7); }
+      75%      { transform: translate(-50%,-50%) translate(10px,-30px) scale(1.05); opacity: var(--base-o); }
+    }
+    .bokeh {
+      animation: bokeh-drift var(--dur) ease-in-out var(--delay) infinite;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+    }
+
+    /* ── Rising micro-particles (hero only) ───────────────── */
+    @keyframes hero-particle-rise {
+      0%   { transform: translateY(0)         translateX(0);           opacity: 0; }
+      8%   { opacity: var(--op); }
+      50%  { transform: translateY(-50vh)    translateX(var(--dx));   opacity: var(--op); }
+      90%  { opacity: calc(var(--op) * 0.4); }
+      100% { transform: translateY(-100vh)   translateX(0);           opacity: 0; }
+    }
+    .hero-particle {
+      animation: hero-particle-rise var(--dur) linear var(--delay) infinite;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+    }
+
+    /* ── Prism rays ──────────────────────────────────────── */
+    @keyframes ray-pulse {
+      0%,100% { opacity: calc(var(--base-o) * 0.5); }
+      50%      { opacity: var(--base-o); }
+    }
+    .prism-ray {
+      animation: ray-pulse var(--dur) ease-in-out var(--delay) infinite;
+    }
+
+    /* ── Diamond orbit rings ─────────────────────────────── */
+    @keyframes orbit-cw {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    @keyframes orbit-ccw {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(-360deg); }
+    }
+    .orbit-cw  { animation: orbit-cw  var(--dur) linear infinite; transform-origin: center; will-change: transform; transform: translateZ(0); }
+    .orbit-ccw { animation: orbit-ccw var(--dur) linear infinite; transform-origin: center; will-change: transform; transform: translateZ(0); }
+
+    /* ── Diamond ring halos ──────────────────────────────── */
+    @keyframes ring-pulse {
+      0%,100% { opacity: calc(0.03 + var(--i) * 0.02); transform: scale(1); }
+      50%      { opacity: calc(0.12 - var(--i) * 0.01); transform: scale(1.01); }
+    }
+    .diamond-ring {
+      animation: ring-pulse calc(3s + var(--i) * 0.8s) ease-in-out calc(var(--i) * 0.5s) infinite;
+      will-change: transform, opacity;
+      transform: translateZ(0);
+    }
+
+    /* ── Scroll indicator bounce ─────────────────────────── */
+    @keyframes scroll-bounce {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(8px); }
+    }
+    .scroll-indicator { animation: scroll-bounce 2s ease-in-out infinite; }
+
+    /* ── Text entrance ────────────────────────────────────── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up-1 { animation: fade-up 0.7s ease-out 0s     forwards; opacity: 0; }
+    .fade-up-2 { animation: fade-up 0.7s ease-out 0.1s  forwards; opacity: 0; }
+    .fade-up-3 { animation: fade-up 0.7s ease-out 0.2s  forwards; opacity: 0; }
+    .fade-up-4 { animation: fade-up 0.7s ease-out 0.3s  forwards; opacity: 0; }
+    .fade-up-5 { animation: fade-up 0.7s ease-out 0.45s forwards; opacity: 0; }
+
+    /* ── Stat entrance ────────────────────────────────────── */
+    @keyframes stat-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .stat-0 { animation: stat-in 0.5s ease-out 0.6s  forwards; opacity: 0; }
+    .stat-1 { animation: stat-in 0.5s ease-out 0.7s  forwards; opacity: 0; }
+    .stat-2 { animation: stat-in 0.5s ease-out 0.8s  forwards; opacity: 0; }
+
+    /* ── Tagline line expand ──────────────────────────────── */
+    @keyframes line-expand {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+    .tagline-line { animation: line-expand 0.8s ease-out 0.3s forwards; transform-origin: left center; }
+
+    /* ── Hero diamond entrance ────────────────────────────── */
+    @keyframes diamond-appear {
+      from { opacity: 0; transform: scale(0.8); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .diamond-entrance {
+      animation: diamond-appear 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+  `;
+  document.head.appendChild(s);
 }
 
-// ── Round brilliant top-view diamond SVG ─────────────────
+// ── Diamond SVG ─────────────────────────────────────────────
 function DiamondGem({ opacity = 1 }: { opacity?: number }) {
   const rOuter = 90;
   const rInner = 38;
@@ -63,12 +179,12 @@ function DiamondGem({ opacity = 1 }: { opacity?: number }) {
   const mainFacets = p.map((pk, k) => {
     const qA = q[(k + 7) % 8];
     const qB = q[k];
-    return `${pk.x.toFixed(1)},${pk.y.toFixed(1)} ${qA.x.toFixed(1)},${qA.y.toFixed(1)} ${qB.x.toFixed(1)},${qB.y.toFixed(1)}`;
+    return `${pk.x.toFixed(1)},${qA.y.toFixed(1)} ${qA.x.toFixed(1)},${qA.y.toFixed(1)} ${qB.x.toFixed(1)},${qB.y.toFixed(1)}`;
   });
   const starFacets = q.map((qk, k) => {
     const pA = p[k];
     const pB = p[(k + 1) % 8];
-    return `${qk.x.toFixed(1)},${qk.y.toFixed(1)} ${pA.x.toFixed(1)},${pA.y.toFixed(1)} ${pB.x.toFixed(1)},${pB.y.toFixed(1)}`;
+    return `${qk.x.toFixed(1)},${pA.y.toFixed(1)} ${pA.x.toFixed(1)},${pA.y.toFixed(1)} ${pB.x.toFixed(1)},${pB.y.toFixed(1)}`;
   });
   const crossLines: { x1: number; y1: number; x2: number; y2: number }[] = [];
   p.forEach((pk, k) => {
@@ -132,88 +248,69 @@ function DiamondGem({ opacity = 1 }: { opacity?: number }) {
   );
 }
 
-// ── Sparkle positions ─────────────────────────────────────
-const SPARKLE_RING: { top: string; left: string; delay: number; size: number }[] = [
-  { top: "50%",  left: "88%", delay: 0,   size: 14 },
-  { top: "16%",  left: "83%", delay: 0.8, size: 10 },
-  { top: "5%",   left: "50%", delay: 1.6, size: 16 },
-  { top: "16%",  left: "17%", delay: 2.4, size: 10 },
-  { top: "50%",  left: "6%",  delay: 3.2, size: 12 },
-  { top: "82%",  left: "17%", delay: 1.0, size: 10 },
-  { top: "94%",  left: "50%", delay: 2.0, size: 14 },
-  { top: "82%",  left: "83%", delay: 3.8, size: 10 },
-];
+function DiamondHero() {
+  return (
+    <div className="diamond-2d-spin w-full h-full flex items-center justify-center">
+      <DiamondGem />
+    </div>
+  );
+}
 
-// ── Bokeh ────────────────────────────────────────────────
-const BOKEH = [
-  { size: 180, x: "20%", y: "30%", delay: 0,   dur: 18, color: "198,168,120", o: 0.06 },
-  { size: 120, x: "70%", y: "60%", delay: 3,   dur: 14, color: "217,221,227", o: 0.05 },
-  { size: 240, x: "50%", y: "80%", delay: 6,   dur: 22, color: "198,168,120", o: 0.04 },
-  { size: 80,  x: "85%", y: "20%", delay: 1.5, dur: 16, color: "246,241,232", o: 0.07 },
-  { size: 160, x: "10%", y: "70%", delay: 4,   dur: 20, color: "138,143,152", o: 0.05 },
-  { size: 100, x: "60%", y: "15%", delay: 2.5, dur: 12, color: "198,168,120", o: 0.08 },
-  { size: 220, x: "35%", y: "15%", delay: 1,   dur: 26, color: "120,80,220",  o: 0.05 },
-  { size: 150, x: "88%", y: "55%", delay: 5,   dur: 19, color: "40,160,210",  o: 0.06 },
-  { size: 280, x: "5%",  y: "45%", delay: 2,   dur: 32, color: "190,60,130",  o: 0.04 },
-  { size: 110, x: "72%", y: "88%", delay: 7,   dur: 15, color: "60,190,160",  o: 0.07 },
-  { size: 90,  x: "25%", y: "92%", delay: 3.5, dur: 21, color: "220,140,60",  o: 0.06 },
-  { size: 130, x: "55%", y: "42%", delay: 9,   dur: 17, color: "80,120,220",  o: 0.05 },
-];
-
-// ── Aurora bands ─────────────────────────────────────────
+// ── Static data ──────────────────────────────────────────────
 const AURORA = [
-  { from: "rgba(120,60,220,0)",  via: "rgba(120,60,220,0.06)", to: "rgba(60,160,220,0)",  top: "8%",  h: "28%", rot: -12, delay: 0,   dur: 14 },
-  { from: "rgba(40,180,200,0)",  via: "rgba(40,180,200,0.05)", to: "rgba(120,60,220,0)",  top: "55%", h: "22%", rot: 8,   delay: 3,   dur: 18 },
-  { from: "rgba(200,100,60,0)",  via: "rgba(198,168,120,0.07)",to: "rgba(200,100,60,0)",  top: "30%", h: "18%", rot: -6,  delay: 6,   dur: 22 },
-  { from: "rgba(60,200,160,0)",  via: "rgba(60,200,160,0.04)", to: "rgba(200,180,60,0)",  top: "72%", h: "20%", rot: 10,  delay: 9,   dur: 16 },
-  { from: "rgba(180,40,120,0)",  via: "rgba(180,40,120,0.04)", to: "rgba(40,100,220,0)",  top: "18%", h: "15%", rot: 15,  delay: 4,   dur: 20 },
+  { top: "8%",  h: "28%", rot: -12, delay: "0s",  dur: "14s", grad: "linear-gradient(to right,rgba(120,60,220,0),rgba(120,60,220,0.06) 40%,rgba(120,60,220,0.06) 60%,rgba(60,160,220,0))" },
+  { top: "55%", h: "22%", rot: 8,   delay: "3s",  dur: "18s", grad: "linear-gradient(to right,rgba(40,180,200,0),rgba(40,180,200,0.05) 40%,rgba(40,180,200,0.05) 60%,rgba(120,60,220,0))" },
+  { top: "30%", h: "18%", rot: -6,  delay: "6s",  dur: "22s", grad: "linear-gradient(to right,rgba(200,100,60,0),rgba(198,168,120,0.07) 40%,rgba(198,168,120,0.07) 60%,rgba(200,100,60,0))" },
+  { top: "72%", h: "20%", rot: 10,  delay: "9s",  dur: "16s", grad: "linear-gradient(to right,rgba(60,200,160,0),rgba(60,200,160,0.04) 40%,rgba(60,200,160,0.04) 60%,rgba(200,180,60,0))" },
+  { top: "18%", h: "15%", rot: 15,  delay: "4s",  dur: "20s", grad: "linear-gradient(to right,rgba(180,40,120,0),rgba(180,40,120,0.04) 40%,rgba(180,40,120,0.04) 60%,rgba(40,100,220,0))" },
 ];
 
-// ── Floating micro-particles ──────────────────────────────
-const PARTICLES = [
-  { x: 8,  delay: 0,    dur: 12, size: 1.5, o: 0.4 },
-  { x: 15, delay: 1.5,  dur: 16, size: 1,   o: 0.3 },
-  { x: 23, delay: 3,    dur: 11, size: 2,   o: 0.5 },
-  { x: 31, delay: 0.8,  dur: 14, size: 1.5, o: 0.35},
-  { x: 40, delay: 5,    dur: 18, size: 1,   o: 0.3 },
-  { x: 47, delay: 2.2,  dur: 13, size: 2,   o: 0.45},
-  { x: 55, delay: 7,    dur: 10, size: 1,   o: 0.25},
-  { x: 62, delay: 1,    dur: 15, size: 1.5, o: 0.4 },
-  { x: 69, delay: 4,    dur: 19, size: 2,   o: 0.3 },
-  { x: 78, delay: 6,    dur: 12, size: 1,   o: 0.35},
-  { x: 84, delay: 2.8,  dur: 17, size: 1.5, o: 0.5 },
-  { x: 91, delay: 0.5,  dur: 11, size: 1,   o: 0.3 },
-  { x: 12, delay: 9,    dur: 13, size: 2,   o: 0.4 },
-  { x: 35, delay: 3.5,  dur: 20, size: 1,   o: 0.25},
-  { x: 58, delay: 8,    dur: 14, size: 1.5, o: 0.35},
-  { x: 74, delay: 1.8,  dur: 16, size: 1,   o: 0.4 },
-  { x: 88, delay: 5.5,  dur: 10, size: 2,   o: 0.3 },
-  { x: 42, delay: 11,   dur: 15, size: 1,   o: 0.2 },
-  { x: 19, delay: 7.5,  dur: 18, size: 1.5, o: 0.45},
-  { x: 65, delay: 4.5,  dur: 12, size: 1,   o: 0.3 },
+const BOKEH = [
+  { size: 180, x: "20%", y: "30%", delay: "0s",   dur: "18s", color: "198,168,120", o: 0.06 },
+  { size: 120, x: "70%", y: "60%", delay: "3s",   dur: "14s", color: "217,221,227", o: 0.05 },
+  { size: 240, x: "50%", y: "80%", delay: "6s",   dur: "22s", color: "198,168,120", o: 0.04 },
+  { size: 80,  x: "85%", y: "20%", delay: "1.5s", dur: "16s", color: "246,241,232", o: 0.07 },
+  { size: 160, x: "10%", y: "70%", delay: "4s",   dur: "20s", color: "138,143,152", o: 0.05 },
+  { size: 100, x: "60%", y: "15%", delay: "2.5s", dur: "12s", color: "198,168,120", o: 0.08 },
+  { size: 220, x: "35%", y: "15%", delay: "1s",   dur: "26s", color: "120,80,220",  o: 0.05 },
+  { size: 150, x: "88%", y: "55%", delay: "5s",   dur: "19s", color: "40,160,210",  o: 0.06 },
+  { size: 280, x: "5%",  y: "45%", delay: "2s",   dur: "32s", color: "190,60,130",  o: 0.04 },
+  { size: 110, x: "72%", y: "88%", delay: "7s",   dur: "15s", color: "60,190,160",  o: 0.07 },
+  { size: 90,  x: "25%", y: "92%", delay: "3.5s", dur: "21s", color: "220,140,60",  o: 0.06 },
+  { size: 130, x: "55%", y: "42%", delay: "9s",   dur: "17s", color: "80,120,220",  o: 0.05 },
 ];
 
-// ── Prism light rays ─────────────────────────────────────
+// Mobile: reduced to 6 particles
+const HERO_PARTICLES = [
+  { x: 8,  delay: "0s",   dur: "12s", size: 1.5, o: 0.4, dx: 20  },
+  { x: 23, delay: "3s",   dur: "11s", size: 2,   o: 0.5, dx: -20 },
+  { x: 40, delay: "5s",   dur: "18s", size: 1,   o: 0.3, dx: 20  },
+  { x: 55, delay: "7s",   dur: "10s", size: 2,   o: 0.45,dx: -20 },
+  { x: 69, delay: "4s",   dur: "19s", size: 1.5, o: 0.3, dx: 20  },
+  { x: 84, delay: "2.8s", dur: "17s", size: 1,   o: 0.5, dx: -20 },
+  { x: 12, delay: "9s",   dur: "13s", size: 2,   o: 0.4, dx: 20  },
+  { x: 58, delay: "8s",   dur: "14s", size: 1.5, o: 0.35,dx: -20 },
+  { x: 35, delay: "3.5s", dur: "20s", size: 1,   o: 0.25,dx: 20  },
+  { x: 74, delay: "1.8s", dur: "16s", size: 1,   o: 0.4, dx: -20 },
+];
+
 const PRISM_RAYS = [
-  { angle: -35, color: "#7EC8E3", w: 120, o: 0.12, delay: 0,   dur: 8  },
-  { angle: -20, color: "#C6A878", w: 80,  o: 0.10, delay: 1.5, dur: 10 },
-  { angle: -8,  color: "#E8C4F0", w: 60,  o: 0.08, delay: 3,   dur: 7  },
-  { angle: 5,   color: "#60D8B0", w: 90,  o: 0.09, delay: 0.8, dur: 12 },
-  { angle: 18,  color: "#F0C8A0", w: 70,  o: 0.11, delay: 2.5, dur: 9  },
+  { angle: -35, color: "#7EC8E3", w: 120, o: 0.12, delay: "0s",   dur: "8s"  },
+  { angle: -20, color: "#C6A878", w: 80,  o: 0.10, delay: "1.5s", dur: "10s" },
+  { angle: -8,  color: "#E8C4F0", w: 60,  o: 0.08, delay: "3s",   dur: "7s"  },
+  { angle: 5,   color: "#60D8B0", w: 90,  o: 0.09, delay: "0.8s", dur: "12s" },
+  { angle: 18,  color: "#F0C8A0", w: 70,  o: 0.11, delay: "2.5s", dur: "9s"  },
 ];
 
-const fadeUp = {
-  initial: { opacity: 0, y: 32 },
-  animate: { opacity: 1, y: 0 },
-};
-
-type LuxHeroSectionProps = {
-  diamondCount: number;
-};
+type LuxHeroSectionProps = { diamondCount: number };
 
 export function LuxHeroSection({ diamondCount }: LuxHeroSectionProps) {
   const locale = useLocale() as "en" | "th";
   const c = CONTENT[locale];
+
+  if (typeof window !== "undefined") {
+    injectHeroStyles();
+  }
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-[#0B0B0D]">
@@ -228,42 +325,46 @@ export function LuxHeroSection({ diamondCount }: LuxHeroSectionProps) {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_45%_30%_at_50%_95%,rgba(60,190,140,0.04)_0%,transparent_70%)]" />
 
         {AURORA.map((a, i) => (
-          <motion.div
+          <div
             key={`aurora${i}`}
-            className="absolute inset-x-0 pointer-events-none"
+            className="absolute inset-x-0 aurora-band pointer-events-none"
             style={{
               top: a.top, height: a.h,
-              background: `linear-gradient(to right, ${a.from}, ${a.via} 40%, ${a.via} 60%, ${a.to})`,
-              transform: `rotate(${a.rot}deg) scaleX(1.4)`,
+              background: a.grad,
               filter: "blur(40px)",
-            }}
-            animate={{ opacity: [0.4, 1, 0.6, 1, 0.4], scaleX: [1.4, 1.6, 1.3, 1.5, 1.4], y: [0, -15, 8, -5, 0] }}
-            transition={{ duration: a.dur, delay: a.delay, repeat: Infinity, ease: "easeInOut" }}
+              "--rot": `${a.rot}deg`,
+              "--dur": a.dur,
+              "--delay": a.delay,
+            } as React.CSSProperties}
           />
         ))}
 
         {BOKEH.map((b, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full"
+          <div
+            key={`bokeh${i}`}
+            className="absolute rounded-full bokeh pointer-events-none"
             style={{
               width: b.size, height: b.size, left: b.x, top: b.y,
               background: `radial-gradient(circle, rgba(${b.color},${b.o}) 0%, transparent 70%)`,
               filter: `blur(${b.size * 0.3}px)`,
-              transform: "translate(-50%, -50%)",
-            }}
-            animate={{ x: [0, 30, -20, 0], y: [0, -40, 20, 0], scale: [1, 1.15, 0.9, 1], opacity: [b.o * 8, b.o * 12, b.o * 6, b.o * 8] }}
-            transition={{ duration: b.dur, delay: b.delay, repeat: Infinity, ease: "easeInOut" }}
+              "--dur": b.dur,
+              "--delay": b.delay,
+              "--base-o": b.o,
+            } as React.CSSProperties}
           />
         ))}
 
-        {PARTICLES.map((p, i) => (
-          <motion.div
-            key={`p${i}`}
-            className="absolute rounded-full bg-[#C6A878]"
-            style={{ width: p.size, height: p.size, left: `${p.x}%`, bottom: "-4px", opacity: p.o }}
-            animate={{ y: [0, "-100vh"], opacity: [0, p.o, p.o, 0], x: [0, (i % 2 === 0 ? 20 : -20)] }}
-            transition={{ duration: p.dur, delay: p.delay, repeat: Infinity, ease: "linear" }}
+        {HERO_PARTICLES.map((p, i) => (
+          <div
+            key={`hp${i}`}
+            className="absolute hero-particle pointer-events-none rounded-full bg-[#C6A878]"
+            style={{
+              width: p.size, height: p.size, left: `${p.x}%`, bottom: "-4px",
+              "--dur": p.dur,
+              "--delay": p.delay,
+              "--op": p.o,
+              "--dx": `${p.dx}px`,
+            } as React.CSSProperties}
           />
         ))}
       </div>
@@ -285,8 +386,6 @@ export function LuxHeroSection({ diamondCount }: LuxHeroSectionProps) {
         <div className="absolute top-0 left-[65%] w-px h-full bg-gradient-to-b from-transparent via-[#40C8A0]/5 to-transparent" />
         <div className="absolute top-0 right-[15%] w-px h-full bg-gradient-to-b from-transparent via-[#E8A060]/6 to-transparent" />
         <div className="absolute top-0 left-[42%] w-px h-full bg-gradient-to-b from-transparent via-[#60A8E8]/4 to-transparent" />
-        <motion.div className="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-[#C6A878]/20 to-transparent" animate={{ top: ["0%", "100%"] }} transition={{ duration: 8, repeat: Infinity, ease: "linear", delay: 2 }} />
-        <motion.div className="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-[#80C8FF]/15 to-transparent" animate={{ top: ["100%", "0%"] }} transition={{ duration: 12, repeat: Infinity, ease: "linear", delay: 4 }} />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_100%_100%_at_50%_50%,transparent_30%,rgba(11,11,13,0.5)_100%)]" />
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#0B0B0D] to-transparent" />
       </div>
@@ -294,9 +393,9 @@ export function LuxHeroSection({ diamondCount }: LuxHeroSectionProps) {
       {/* ── Prism rays from diamond side ─────────────────── */}
       <div className="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none overflow-hidden -z-10">
         {PRISM_RAYS.map((r, i) => (
-          <motion.div
+          <div
             key={`ray${i}`}
-            className="absolute right-[30%] top-1/2"
+            className="absolute right-[30%] top-1/2 prism-ray"
             style={{
               width: `${r.w}px`, height: "1px",
               background: `linear-gradient(to left, transparent, ${r.color})`,
@@ -304,9 +403,10 @@ export function LuxHeroSection({ diamondCount }: LuxHeroSectionProps) {
               transformOrigin: "right center",
               opacity: r.o,
               filter: "blur(1px)",
-            }}
-            animate={{ opacity: [r.o * 0.5, r.o, r.o * 0.3, r.o] }}
-            transition={{ duration: r.dur, delay: r.delay, repeat: Infinity, ease: "easeInOut" }}
+              "--base-o": r.o,
+              "--dur": r.dur,
+              "--delay": r.delay,
+            } as React.CSSProperties}
           />
         ))}
       </div>
@@ -317,26 +417,26 @@ export function LuxHeroSection({ diamondCount }: LuxHeroSectionProps) {
 
           {/* Left: Text */}
           <div className="order-2 lg:order-1">
-            <motion.div variants={fadeUp} initial="initial" animate="animate" transition={{ duration: 0.7 }} className="flex items-center gap-3 mb-8">
-              <motion.div animate={{ scaleX: [0, 1] }} transition={{ duration: 0.8, delay: 0.3 }} className="w-8 h-px bg-[#C6A878]/60 origin-left" />
+            <div className="flex items-center gap-3 mb-8 fade-up-1">
+              <div className="w-8 h-px bg-[#C6A878]/60 tagline-line" />
               <span className="text-[10px] tracking-[0.4em] text-[#C6A878] uppercase font-light">
                 {c.tagline}
               </span>
-            </motion.div>
+            </div>
 
-            <motion.h1 variants={fadeUp} initial="initial" animate="animate" transition={{ duration: 0.7, delay: 0.1 }} className="font-display text-5xl sm:text-6xl lg:text-7xl font-light leading-[1.05] text-[#F6F1E8] mb-6">
+            <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-light leading-[1.05] text-[#F6F1E8] mb-6 fade-up-2">
               {c.headline.map((line, i) => (
                 <span key={i} className={i === 1 ? "not-italic text-shimmer" : ""}>
                   {line}<br />
                 </span>
               ))}
-            </motion.h1>
+            </h1>
 
-            <motion.p variants={fadeUp} initial="initial" animate="animate" transition={{ duration: 0.7, delay: 0.2 }} className="text-[#8A8F98] text-lg font-light leading-relaxed max-w-lg mb-10">
+            <p className="text-[#8A8F98] text-lg font-light leading-relaxed max-w-lg mb-10 fade-up-3">
               {c.subline}
-            </motion.p>
+            </p>
 
-            <motion.div variants={fadeUp} initial="initial" animate="animate" transition={{ duration: 0.7, delay: 0.3 }} className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3 fade-up-4">
               <Link href="/collections" className="relative flex items-center gap-2 px-8 py-4 bg-[#C6A878] text-[#0B0B0D] text-[11px] tracking-[0.25em] uppercase font-medium hover:bg-[#D9C4A0] transition-colors duration-300 overflow-hidden group">
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                 {c.shopCollections}
@@ -348,32 +448,42 @@ export function LuxHeroSection({ diamondCount }: LuxHeroSectionProps) {
               <Link href="/build" className="flex items-center gap-2 px-8 py-4 border border-[#2A2A30] text-[#8A8F98] text-[11px] tracking-[0.25em] uppercase font-light hover:border-[#C6A878]/30 hover:text-[#F6F1E8] transition-colors duration-300">
                 {c.buildYourRing}
               </Link>
-            </motion.div>
+            </div>
 
             {/* Trust stats */}
-            <motion.div variants={fadeUp} initial="initial" animate="animate" transition={{ duration: 0.7, delay: 0.45 }} className="flex items-center gap-6 mt-10 pt-8 border-t border-[#1A1A1E]">
+            <div className="flex items-center gap-6 mt-10 pt-8 border-t border-[#1A1A1E] fade-up-5">
               {c.stats.map((stat, i) => (
-                <motion.div key={stat.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 + i * 0.1 }}>
+                <div key={stat.label} className={`stat-${i}`}>
                   <p className="text-sm font-light text-[#F6F1E8]">
                     {stat.value ?? diamondCount}
                   </p>
                   <p className="text-[10px] tracking-[0.15em] text-[#8A8F98] uppercase mt-0.5">
                     {stat.label}
                   </p>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           </div>
 
           {/* Right: Diamond sculpture */}
           <div className="order-1 lg:order-2 flex items-center justify-center">
-            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }} className="relative w-[360px] h-[360px] sm:w-[460px] sm:h-[460px]">
+            <div className="relative w-[360px] h-[360px] sm:w-[460px] sm:h-[460px] diamond-entrance">
+
+              {/* Concentric rings */}
               {[0, 1, 2, 3, 4].map((i) => (
-                <motion.div key={`ring${i}`} className="absolute rounded-full border border-[#C6A878]" style={{ inset: i * 10 }} animate={{ opacity: [0.03 + i * 0.02, 0.12 - i * 0.01, 0.03 + i * 0.02], scale: [1, 1.01, 1] }} transition={{ duration: 3 + i * 0.8, delay: i * 0.5, repeat: Infinity, ease: "easeInOut" }} />
+                <div
+                  key={`ring${i}`}
+                  className="absolute rounded-full border border-[#C6A878] diamond-ring"
+                  style={{ inset: i * 10, "--i": i } as React.CSSProperties}
+                />
               ))}
-              <motion.div className="absolute inset-0 rounded-full border border-[#7EC8E3]/20" animate={{ opacity: [0.05, 0.2, 0.05], scale: [1.02, 1.06, 1.02] }} transition={{ duration: 5, delay: 1, repeat: Infinity, ease: "easeInOut" }} />
-              <motion.div className="absolute inset-0 rounded-full border border-[#C080E8]/15" style={{ inset: -8 }} animate={{ opacity: [0.04, 0.16, 0.04], scale: [1, 1.04, 1] }} transition={{ duration: 7, delay: 2.5, repeat: Infinity, ease: "easeInOut" }} />
-              <motion.div className="absolute inset-0" animate={{ rotate: 360 }} transition={{ duration: 12, repeat: Infinity, ease: "linear" }}>
+
+              {/* Bounded glow rings */}
+              <div className="absolute inset-0 rounded-full border border-[#7EC8E3]/20 orbit-cw" style={{ "--dur": "5s", animationDelay: "1s" } as React.CSSProperties} />
+              <div className="absolute inset-0 rounded-full border border-[#C080E8]/15 orbit-ccw" style={{ inset: "-8px", "--dur": "7s", animationDelay: "2.5s" } as React.CSSProperties} />
+
+              {/* SVG arc orbits */}
+              <div className="absolute inset-0 orbit-cw" style={{ "--dur": "12s" } as React.CSSProperties}>
                 <svg viewBox="0 0 100 100" className="w-full h-full opacity-40" aria-hidden="true">
                   <defs>
                     <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -384,13 +494,13 @@ export function LuxHeroSection({ diamondCount }: LuxHeroSectionProps) {
                   </defs>
                   <path d="M 50,3 A 47,47 0 0,1 97,50" fill="none" stroke="url(#arcGrad)" strokeWidth="0.5" strokeLinecap="round" />
                 </svg>
-              </motion.div>
-              <motion.div className="absolute inset-2" animate={{ rotate: -360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }}>
+              </div>
+              <div className="absolute inset-2 orbit-ccw" style={{ "--dur": "20s" } as React.CSSProperties}>
                 <svg viewBox="0 0 100 100" className="w-full h-full opacity-20" aria-hidden="true">
                   <path d="M 50,5 A 45,45 0 0,0 5,50" fill="none" stroke="#C6A878" strokeWidth="0.4" strokeLinecap="round" strokeDasharray="20 80" />
                 </svg>
-              </motion.div>
-              <motion.div className="absolute inset-4" animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }}>
+              </div>
+              <div className="absolute inset-4 orbit-cw" style={{ "--dur": "30s" } as React.CSSProperties}>
                 <svg viewBox="0 0 100 100" className="w-full h-full opacity-30" aria-hidden="true">
                   <defs>
                     <linearGradient id="arcCyan" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -401,23 +511,24 @@ export function LuxHeroSection({ diamondCount }: LuxHeroSectionProps) {
                   </defs>
                   <path d="M 50,5 A 45,45 0 0,1 95,50 A 45,45 0 0,1 50,95" fill="none" stroke="url(#arcCyan)" strokeWidth="0.4" strokeLinecap="round" strokeDasharray="30 70" />
                 </svg>
-              </motion.div>
+              </div>
+
               <div className="absolute inset-8 rounded-full bg-[#C6A878]/10 blur-3xl" />
               <div className="absolute inset-8 rounded-full bg-[#7EC8E3]/6 blur-2xl" style={{ transform: "translate(10%, -10%)" }} />
               <div className="absolute inset-8 rounded-full bg-[#C080E8]/5 blur-2xl" style={{ transform: "translate(-8%, 12%)" }} />
               <div className="absolute inset-16">
                 <DiamondHero />
               </div>
-            </motion.div>
+            </div>
           </div>
 
         </div>
       </div>
 
       {/* Scroll indicator */}
-      <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }} className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 scroll-indicator">
         <ChevronDown className="w-5 h-5 text-[#8A8F98]" />
-      </motion.div>
+      </div>
 
     </section>
   );
