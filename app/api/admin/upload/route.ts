@@ -1,33 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin, STORAGE_BUCKET } from "@/lib/supabase-admin";
+import { put } from "@vercel/blob";
 
 export const dynamic = "force-dynamic";
+
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+const MAX_SIZE_MB = 10;
+const STORE_NAME = "jewelry-images-2";
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const file = formData.get("file") as File;
-    if (!file) return NextResponse.json({ error: "No file" }, { status: 400 });
+    const file = formData.get("file") as File | null;
 
-    const ext = file.name.split(".").pop() ?? "jpg";
-    const fileName = `diamond-${Date.now()}.${ext}`;
+    if (!file) {
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    }
+
+    // Validate file type
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return NextResponse.json(
+        { error: `Invalid file type "${file.type}". Allowed: JPG, PNG, WEBP, GIF` },
+        { status: 400 }
+      );
+    }
+
+    // Validate file size (10MB max)
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      return NextResponse.json(
+        { error: `File too large. Maximum size is ${MAX_SIZE_MB}MB` },
+        { status: 400 }
+      );
+    }
+
+    // Extract extension from filename
+    const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+    const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+    const blobPath = `diamonds/${Date.now()}-${safeName}`;
+
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    const { error } = await supabaseAdmin.storage
-      .from(STORAGE_BUCKET)
-      .upload(fileName, buffer, {
-        contentType: file.type,
-        upsert: true,
-      });
+    const blob = await put(blobPath, buffer, {
+      contentType: file.type,
+      access: "public",
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    });
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-    const { data } = supabaseAdmin.storage
-      .from(STORAGE_BUCKET)
-      .getPublicUrl(fileName);
-
-    return NextResponse.json({ url: data.publicUrl });
+    return NextResponse.json({ url: blob.url });
   } catch (err) {
+    console.error("[upload error]", err);
     return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }
