@@ -1,35 +1,58 @@
+@import "tailwindcss";
+
+/* ── LUX GEM Theme — shadcn/ui v4 CSS variables ───────────── */
+@theme {
+  --color-background: oklch(0.15 0.02 250);
+  --color-foreground: oklch(0.92 0.01 85);
+  --color-card: oklch(0.18 0.02 250);
+  --color-card-foreground: oklch(0.92 0.01 85);
+  --color-primary: oklch(0.72 0.12 85);
+  --color-primary-foreground: oklch(0.15 0.02 250);
+  --color-secondary: oklch(0.25 0.02 250);
+  --color-secondary-foreground: oklch(0.92 0.01 85);
+  --color-muted: oklch(0.25 0.02 250);
+  --color-muted-foreground: oklch(0.60 0.01 85);
+  --color-accent: oklch(0.72 0.12 85);
+  --color-accent-foreground: oklch(0.15 0.02 250);
+  --color-destructive: oklch(0.55 0.20 25);
+  --color-border: oklch(0.28 0.02 250);
+  --color-input: oklch(0.28 0.02 250);
+  --color-ring: oklch(0.72 0.12 85);
+  --radius: 0.625rem;
+}
+
 /* ── 2D Diamond SVG — pure flat rotation ────────────────── */
 @keyframes diamond-spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
 
+@keyframes float-gem {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(198, 168, 120, 0.3); }
+  50% { box-shadow: 0 0 24px rgba(198, 168, 120, 0.7); }
+}
+
+@keyframes shimmer-gold {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
 @layer utilities {
   .font-display {
     font-family: var(--font-cormorant), Georgia, serif;
   }
-  .text-gold {
-    color: #C6A878;
-  }
-  .bg-gold {
-    background-color: #C6A878;
-  }
-  .border-gold {
-    border-color: #C6A878;
-  }
-  .animate-diamond-spin {
-    animation: diamond-spin 16s linear infinite;
-  }
-  .animate-float-gem {
-    animation: float-gem 6s ease-in-out infinite;
-  }
-  .animate-glow-pulse {
-    animation: glow-pulse 4s ease-in-out infinite;
-  }
-  .animate-shimmer-gold {
-    background-size: 200% auto;
-    animation: shimmer-gold 3s linear infinite;
-  }
+  .text-gold { color: #C6A878; }
+  .bg-gold { background-color: #C6A878; }
+  .border-gold { border-color: #C6A878; }
+  .animate-diamond-spin { animation: diamond-spin 16s linear infinite; }
+  .animate-float-gem { animation: float-gem 6s ease-in-out infinite; }
+  .animate-glow-pulse { animation: glow-pulse 4s ease-in-out infinite; }
+  .animate-shimmer-gold { background-size: 200% auto; animation: shimmer-gold 3s linear infinite; }
   .text-shimmer {
     background: linear-gradient(90deg, #C6A878 0%, #F6F1E8 40%, #C6A878 60%, #8A6C44 100%);
     background-size: 200% auto;
@@ -38,8 +61,5 @@
     background-clip: text;
     animation: shimmer-gold 4s linear infinite;
   }
-  /* Pure 2D diamond rotation — no 3D compositor overhead */
-  .diamond-2d-spin {
-    animation: diamond-spin 16s linear infinite;
-  }
+  .diamond-2d-spin { animation: diamond-spin 16s linear infinite; }
 }
