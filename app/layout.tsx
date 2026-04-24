@@ -1,9 +1,7 @@
 // Root layout — single HTML shell + i18n provider
-// Locale is read from URL pathname directly (middleware handles routing and cookies)
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Cormorant_Garamond } from "next/font/google";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -41,7 +39,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Read locale from cookie (set by middleware based on URL pathname)
   const cookieLocale = (await cookies()).get("NEXT_LOCALE")?.value;
   const locale = (routing.locales.includes(cookieLocale as "en" | "th")
     ? cookieLocale
@@ -60,9 +57,8 @@ export default async function RootLayout({
         className={`${geist.variable} ${geistMono.variable} ${cormorant.variable} h-full antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
-          <ClientLayout>
+          <ClientLayout locale={locale}>
             {children}
-            <Footer />
           </ClientLayout>
         </NextIntlClientProvider>
       </body>

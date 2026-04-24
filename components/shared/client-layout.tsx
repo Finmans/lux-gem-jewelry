@@ -5,7 +5,7 @@ import { Navbar } from "./navbar";
 import { Footer } from "./footer";
 import { DiamondParticles } from "./diamond-particles";
 
-export function ClientLayout({ children }: { children: React.ReactNode }) {
+export function ClientLayout({ children, locale }: { children: React.ReactNode; locale: string }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
 
@@ -20,7 +20,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
       <main id="main-content" className="flex-1" tabIndex={-1}>
         {children}
       </main>
-      <Footer />
+      <Footer locale={locale} />
     </>
   );
 }

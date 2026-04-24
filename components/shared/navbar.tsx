@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Search, Heart, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ import { LanguageSwitcher } from "./language-switcher";
 
 export function Navbar() {
   const t = useTranslations("nav");
+  const locale = useLocale();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -20,11 +21,11 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
-    { label: t("collections"), href: "/collections" },
-    { label: t("diamondStock"), href: "/diamonds" },
-    { label: t("buildYourRing"), href: "/build" },
-    { label: t("customDesign"), href: "/custom" },
-    { label: t("aboutLUXGEM"), href: "/about" },
+    { label: t("collections"), href: `/${locale}/collections` },
+    { label: t("diamondStock"), href: `/${locale}/diamonds` },
+    { label: t("buildYourRing"), href: `/${locale}/build` },
+    { label: t("customDesign"), href: `/${locale}/custom` },
+    { label: t("aboutLUXGEM"), href: `/${locale}/about` },
   ];
 
   return (
@@ -64,21 +65,21 @@ export function Navbar() {
         <div className="hidden lg:flex items-center gap-3">
           <LanguageSwitcher />
           <Link
-            href="/search"
+            href={`/${locale}/search`}
             className="p-2 text-[#8A8F98] hover:text-[#C6A878] transition-colors"
             aria-label={t("search")}
           >
             <Search className="w-4 h-4" />
           </Link>
           <Link
-            href="/wishlist"
+            href={`/${locale}/wishlist`}
             className="p-2 text-[#8A8F98] hover:text-[#C6A878] transition-colors"
             aria-label={t("wishlist")}
           >
             <Heart className="w-4 h-4" />
           </Link>
           <Link
-            href="/appointment"
+            href={`/${locale}/appointment`}
             className="ml-2 flex items-center gap-1.5 px-5 py-2 border border-[#C6A878]/60 text-[#C6A878] text-[10px] tracking-[0.25em] uppercase hover:bg-[#C6A878]/10 transition-all duration-300"
           >
             <Phone className="w-3 h-3" />
@@ -125,14 +126,14 @@ export function Navbar() {
               <div className="flex gap-4 mt-4 pt-4">
                 <LanguageSwitcher />
                 <Link
-                  href="/search"
+                  href={`/${locale}/search`}
                   className="p-2 text-[#8A8F98] hover:text-[#C6A878] transition-colors"
                   aria-label={t("search")}
                 >
                   <Search className="w-5 h-5" />
                 </Link>
                 <Link
-                  href="/wishlist"
+                  href={`/${locale}/wishlist`}
                   className="p-2 text-[#8A8F98] hover:text-[#C6A878] transition-colors"
                   aria-label={t("wishlist")}
                 >
@@ -140,7 +141,7 @@ export function Navbar() {
                 </Link>
               </div>
               <Link
-                href="/appointment"
+                href={`/${locale}/appointment`}
                 className="mt-4 flex items-center justify-center gap-2 px-5 py-3 border border-[#C6A878]/60 text-[#C6A878] text-xs tracking-[0.25em] uppercase hover:bg-[#C6A878]/10 transition-all"
               >
                 <Phone className="w-3.5 h-3.5" />

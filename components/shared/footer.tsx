@@ -40,13 +40,28 @@ const footerLinks = {
 
 const socials = [
   { Icon: Camera, label: "Instagram", href: "/contact?channel=instagram" },
-  { Icon: Globe, label: "Facebook", href: "/contact?channel=facebook" },
+  { Icon: Globe, label: "Facebook", href: "/contact?facebook" },
   { Icon: Play, label: "YouTube", href: "/contact?channel=youtube" },
   { Icon: MessageCircle, label: "LINE", href: "/contact?channel=line" },
 ];
 
-export function Footer() {
-  const t = useTranslations("footer");
+type FooterLink = {
+  labelKey: string;
+  href: string;
+};
+
+// Prepend locale to href — root hrefs like "/about" become "/th/about"
+function localizedHref(href: string, locale: string): string {
+  if (href.startsWith("/" + locale) || href.startsWith("http") || href.includes("#")) {
+    return href;
+  }
+  return `/${locale}${href}`;
+}
+
+type FooterProps = { locale: string };
+
+export async function Footer({ locale }: FooterProps) {
+  const t = await useTranslations("footer");
 
   return (
     <footer aria-label="Site footer" className="border-t border-[#2A2A30] bg-[#080809]">
@@ -92,10 +107,10 @@ export function Footer() {
                   {t(categoryKey.toLowerCase() as "jewelry" | "diamonds" | "services" | "company")}
                 </p>
                 <ul className="space-y-3">
-                  {links.map((link) => (
+                  {(links as FooterLink[]).map((link) => (
                     <li key={link.href}>
                       <Link
-                        href={link.href}
+                        href={localizedHref(link.href, locale)}
                         className="text-sm text-[#8A8F98] hover:text-[#F6F1E8] transition-colors font-light"
                       >
                         {t(link.labelKey)}

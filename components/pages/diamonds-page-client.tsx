@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useLocale } from "next-intl";
 import { Shield, ArrowUpDown, X, Grid2X2, List } from "lucide-react";
 import type { DiamondRecord } from "@/lib/site-data";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,7 @@ type DiamondsPageClientProps = {
 };
 
 export function DiamondsPageClient({ diamonds }: DiamondsPageClientProps) {
+  const locale = useLocale();
   const [selectedShape, setSelectedShape] = useState<string>("All");
   const [selectedColor, setSelectedColor] = useState<string>("All");
   const [selectedClarity, setSelectedClarity] = useState<string>("All");
@@ -300,7 +302,7 @@ export function DiamondsPageClient({ diamonds }: DiamondsPageClientProps) {
                   className={cn(i < paginated.length - 1 && "border-b border-[#1A1A1E]")}
                 >
                   <Link
-                    href={`/diamonds/${d.id}`}
+                    href={`/${locale}/diamonds/${d.id}`}
                     className="group grid grid-cols-2 md:grid-cols-[50px_70px_1fr_70px_60px_80px_70px_80px_120px] gap-3 px-5 py-4 hover:bg-[#111115] transition-colors items-center"
                   >
                     <p className="text-[10px] text-[#8A8F98]/40 font-mono hidden md:block">{(currentPage - 1) * pageSize + i + 1}</p>
@@ -381,7 +383,7 @@ export function DiamondsPageClient({ diamonds }: DiamondsPageClientProps) {
                 transition={{ duration: 0.4, delay: i * 0.06 }}
               >
                 <Link
-                  href={`/diamonds/${d.id}`}
+                  href={`/${locale}/diamonds/${d.id}`}
                   className="group block border border-[#1A1A1E] hover:border-[#C6A878]/40 transition-all duration-300"
                 >
                   {/* Diamond image */}
@@ -442,12 +444,12 @@ export function DiamondsPageClient({ diamonds }: DiamondsPageClientProps) {
         <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-[#1A1A1E]">
           <p className="text-sm text-[#8A8F98] font-light">
             Can&apos;t find what you&apos;re looking for?{" "}
-            <Link href="/custom?intent=source" className="text-[#C6A878] underline underline-offset-4">
+            <Link href={`/${locale}/custom?intent=source`} className="text-[#C6A878] underline underline-offset-4">
               Request a bespoke sourcing
             </Link>
           </p>
           <Link
-            href="/build"
+            href={`/${locale}/build`}
             className="px-8 py-3 bg-[#C6A878] text-[#0B0B0D] text-[10px] tracking-[0.25em] uppercase hover:bg-[#D9C4A0] transition-colors"
           >
             Build Your Ring
