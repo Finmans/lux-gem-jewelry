@@ -1,39 +1,40 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Camera, Globe, Play, MessageCircle } from "lucide-react";
 import { NewsletterForm } from "@/components/forms/newsletter-form";
 
 const footerLinks = {
   Jewelry: [
-    { label: "Engagement Rings", href: "/collections/engagement" },
-    { label: "Wedding Bands", href: "/collections/wedding" },
-    { label: "Fine Earrings", href: "/collections/earrings" },
-    { label: "Pendants & Necklaces", href: "/collections/necklace" },
-    { label: "Tennis Bracelets", href: "/collections/bracelet" },
-    { label: "High Jewelry", href: "/collections/high-jewelry" },
+    { labelKey: "engagementRings", href: "/collections/engagement" },
+    { labelKey: "weddingBands", href: "/collections/wedding" },
+    { labelKey: "fineEarrings", href: "/collections/earrings" },
+    { labelKey: "pendants", href: "/collections/necklace" },
+    { labelKey: "bracelets", href: "/collections/bracelet" },
+    { labelKey: "highJewelry", href: "/collections/high-jewelry" },
   ],
   Diamonds: [
-    { label: "Diamond Stock", href: "/diamonds" },
-    { label: "Build Your Ring", href: "/build" },
-    { label: "The 4Cs Guide", href: "/education/4cs" },
-    { label: "Lab vs Natural", href: "/education/lab-diamonds" },
-    { label: "Diamond Shapes", href: "/education/shapes" },
+    { labelKey: "diamondStock", href: "/diamonds" },
+    { labelKey: "buildYourRing", href: "/build" },
+    { labelKey: "the4Cs", href: "/education/4cs" },
+    { labelKey: "labVsNatural", href: "/education/lab-diamonds" },
+    { labelKey: "diamondShapes", href: "/education/shapes" },
   ],
   Services: [
-    { label: "Custom Design", href: "/custom" },
-    { label: "Book Appointment", href: "/appointment" },
-    { label: "Ring Sizing", href: "/services/sizing" },
-    { label: "Cleaning & Care", href: "/services/care" },
-    { label: "Certificate Verify", href: "/services/verify" },
-    { label: "Warranty", href: "/warranty" },
-    { label: "Returns & Exchanges", href: "/returns" },
+    { labelKey: "customDesign", href: "/custom" },
+    { labelKey: "bookAppointment", href: "/appointment" },
+    { labelKey: "ringSizing", href: "/services/sizing" },
+    { labelKey: "cleaningCare", href: "/services/care" },
+    { labelKey: "certificateVerify", href: "/services/verify" },
+    { labelKey: "warranty", href: "/warranty" },
+    { labelKey: "returnsExchanges", href: "/returns" },
   ],
   Company: [
-    { label: "About LUX GEM", href: "/about" },
-    { label: "Our Philosophy", href: "/about#philosophy" },
-    { label: "Journal", href: "/journal" },
-    { label: "Careers", href: "/careers" },
-    { label: "Contact", href: "/contact" },
-    { label: "Privacy Policy", href: "/privacy" },
+    { labelKey: "aboutLUXGEM", href: "/about" },
+    { labelKey: "ourPhilosophy", href: "/about#philosophy" },
+    { labelKey: "journal", href: "/journal" },
+    { labelKey: "careers", href: "/careers" },
+    { labelKey: "contact", href: "/contact" },
+    { labelKey: "privacyPolicy", href: "/privacy" },
   ],
 };
 
@@ -45,11 +46,10 @@ const socials = [
 ];
 
 export function Footer() {
+  const t = useTranslations("footer");
+
   return (
-    <footer
-      aria-label="Site footer"
-      className="border-t border-[#2A2A30] bg-[#080809]"
-    >
+    <footer aria-label="Site footer" className="border-t border-[#2A2A30] bg-[#080809]">
       {/* Top band */}
       <div className="border-b border-[#1A1A1E] py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -71,11 +71,11 @@ export function Footer() {
             {/* Newsletter */}
             <div className="w-full lg:w-auto">
               <p className="text-[10px] tracking-[0.3em] text-[#C6A878] uppercase mb-3">
-                Join our inner circle
+                {t("joinInnerCircle")}
               </p>
               <NewsletterForm sourcePage="footer" />
               <p className="text-xs text-[#8A8F98]/60 mt-2">
-                Exclusive collections, events & diamond education.
+                {t("exclusiveText")}
               </p>
             </div>
           </div>
@@ -86,19 +86,19 @@ export function Footer() {
       <div className="py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
-            {Object.entries(footerLinks).map(([category, links]) => (
-              <nav key={category} aria-label={`${category} links`}>
+            {Object.entries(footerLinks).map(([categoryKey, links]) => (
+              <nav key={categoryKey} aria-label={`${categoryKey} links`}>
                 <p className="text-[10px] tracking-[0.3em] text-[#C6A878] uppercase mb-5">
-                  {category}
+                  {t(categoryKey.toLowerCase() as "jewelry" | "diamonds" | "services" | "company")}
                 </p>
                 <ul className="space-y-3">
                   {links.map((link) => (
-                    <li key={link.label}>
+                    <li key={link.href}>
                       <Link
                         href={link.href}
                         className="text-sm text-[#8A8F98] hover:text-[#F6F1E8] transition-colors font-light"
                       >
-                        {link.label}
+                        {t(link.labelKey)}
                       </Link>
                     </li>
                   ))}
@@ -113,8 +113,8 @@ export function Footer() {
       <div className="border-t border-[#1A1A1E] py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-[#8A8F98]/60 font-light">
-            © 2024 บริษัท ลักซ์เจมส์จิวเวลรี่ จำกัด / LUX GEM JEWELRY CO., LTD.
-            All rights reserved.
+            © 2024 บริษัท ลักซ์เจมส์จิวเวลรี่ จำกัด / LUX GEM JEWELRY CO., LTD.{" "}
+            {t("copyright")}
           </p>
           <nav aria-label="Social media links">
             <div className="flex items-center gap-3">
