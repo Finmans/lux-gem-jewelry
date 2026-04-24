@@ -1,94 +1,69 @@
-// @ts-nocheck
+// Root layout — single HTML shell + i18n provider
+// Locale is read from URL pathname directly (middleware handles routing and cookies)
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Cormorant_Garamond } from "next/font/google";
-import "./globals.css";
-import { ClientLayout } from "@/components/shared/client-layout";
+import { cookies, headers } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale } from "next-intl/server";
+import { getMessages } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { routing } from "@/routing";
+import { ClientLayout } from "@/components/shared/client-layout";
+import { Footer } from "@/components/shared/footer";
+import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-sans",
-  subsets: ["latin", "thai"] as any,
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist",
 });
+
 const geistMono = Geist_Mono({
+  subsets: ["latin"],
   variable: "--font-geist-mono",
-  subsets: ["latin", "thai"] as any,
 });
+
 const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
   variable: "--font-cormorant",
-  subsets: ["latin", "thai"] as any,
-  weight: ["300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://my-app-finmans-projects.vercel.app"),
-  title: {
-    default: "LUX GEM — Lab-Grown Diamond Jewelry",
-    template: "%s | LUX GEM",
-  },
-  description:
-    "Crafted Brilliance, Reimagined. Premium lab-grown diamond jewelry with uncompromising quality, transparency, and timeless design.",
   openGraph: {
-    title: "LUX GEM — Lab-Grown Diamond Jewelry",
-    description:
-      "Crafted Brilliance, Reimagined. Premium lab-grown diamond jewelry with uncompromising quality, transparency, and timeless design.",
-    url: "https://my-app-finmans-projects.vercel.app",
-    siteName: "LUX GEM",
-    locale: "th_TH",
     type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "LUX GEM — Lab-Grown Diamond Jewelry",
-    description:
-      "Crafted Brilliance, Reimagined. Premium lab-grown diamond jewelry with uncompromising quality, transparency, and timeless design.",
+    siteName: "LUX GEM",
   },
 };
 
-const skipLinkStyle = `
-  .skip-link {
-    position: absolute;
-    top: -40px;
-    left: 0;
-    z-index: 1000;
-    background: #C6A878;
-    color: #0B0B0D;
-    padding: 8px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: top 0.2s;
-  }
-
-  .skip-link:focus {
-    top: 0;
-    outline: 2px solid #C6A878;
-    outline-offset: 2px;
-  }
-`;
-
 export default async function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  const locale = await getLocale();
+}) {
+  // Read locale from cookie (set by middleware based on URL pathname)
+  const cookieLocale = (await cookies()).get("NEXT_LOCALE")?.value;
+  const locale = (routing.locales.includes(cookieLocale as "en" | "th")
+    ? cookieLocale
+    : routing.defaultLocale) as "en" | "th";
+
+  let messages;
+  try {
+    messages = await getMessages();
+  } catch {
+    notFound();
+  }
 
   return (
-    <html
-      lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} h-full antialiased`}
-    >
-      <head>
-        <style dangerouslySetInnerHTML={{ __html: skipLinkStyle }} />
-      </head>
-      <body className="min-h-full flex flex-col bg-background text-foreground">
-        <NextIntlClientProvider>
-          <a href="#main-content" className="skip-link">
-            Skip to main content
-          </a>
-          <ClientLayout>{children}</ClientLayout>
+    <html lang={locale} suppressHydrationWarning>
+      <body
+        className={`${geist.variable} ${geistMono.variable} ${cormorant.variable} h-full antialiased`}
+      >
+        <NextIntlClientProvider messages={messages}>
+          <ClientLayout>
+            {children}
+            <Footer />
+          </ClientLayout>
         </NextIntlClientProvider>
       </body>
     </html>

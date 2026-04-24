@@ -1,5 +1,4 @@
 import { LuxHeroSection } from "@/components/sections/lux-hero";
-
 import { EntryGateSection } from "@/components/sections/entry-gate";
 import { FeaturedCollectionsSection } from "@/components/sections/featured-collections";
 import { DiamondStockPreviewSection } from "@/components/sections/diamond-stock-preview";
@@ -10,7 +9,7 @@ import { getCollections, getDiamonds } from "@/lib/site-data";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
+export default async function LocaleHomePage() {
   const [collections, diamonds] = await Promise.all([getCollections(), getDiamonds()]);
 
   return (
