@@ -30,7 +30,7 @@ export function Navbar() {
         "fixed top-0 inset-x-0 z-50 transition-all duration-500",
         scrolled
           ? "bg-[#0B0B0D]/90 backdrop-blur-xl border-b border-[#2A2A30]"
-          : "bg-transparent"
+          : "bg-transparent",
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -45,7 +45,10 @@ export function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center gap-0">
+        <nav
+          aria-label="Main navigation"
+          className="hidden lg:flex items-center gap-0"
+        >
           {navLinks.map((link) => (
             <Link
               key={link.label}
@@ -88,7 +91,11 @@ export function Navbar() {
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Toggle menu"
         >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          {mobileOpen ? (
+            <X className="w-5 h-5" />
+          ) : (
+            <Menu className="w-5 h-5" />
+          )}
         </button>
       </div>
 
@@ -101,6 +108,7 @@ export function Navbar() {
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25 }}
             className="lg:hidden border-t border-[#2A2A30] bg-[#0B0B0D]/98 backdrop-blur-xl"
+            aria-label="Mobile navigation"
           >
             <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col gap-1">
               {navLinks.map((link) => (
@@ -114,10 +122,18 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="flex gap-4 mt-4 pt-4">
-                <Link href="/search" className="p-2 text-[#8A8F98] hover:text-[#C6A878] transition-colors" aria-label="Search">
+                <Link
+                  href="/search"
+                  className="p-2 text-[#8A8F98] hover:text-[#C6A878] transition-colors"
+                  aria-label="Search"
+                >
                   <Search className="w-5 h-5" />
                 </Link>
-                <Link href="/wishlist" className="p-2 text-[#8A8F98] hover:text-[#C6A878] transition-colors" aria-label="Wishlist">
+                <Link
+                  href="/wishlist"
+                  className="p-2 text-[#8A8F98] hover:text-[#C6A878] transition-colors"
+                  aria-label="Wishlist"
+                >
                   <Heart className="w-5 h-5" />
                 </Link>
               </div>

@@ -34,7 +34,7 @@ export const metadata: Metadata = {
       "Crafted Brilliance, Reimagined. Premium lab-grown diamond jewelry with uncompromising quality, transparency, and timeless design.",
     url: "https://my-app-ebon-alpha-25.vercel.app",
     siteName: "LUX GEM",
-    locale: "en_US",
+    locale: "th_TH",
     type: "website",
   },
   twitter: {
@@ -45,6 +45,28 @@ export const metadata: Metadata = {
   },
 };
 
+const skipLinkStyle = `
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    z-index: 1000;
+    background: #C6A878;
+    color: #0B0B0D;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: top 0.2s;
+  }
+
+  .skip-link:focus {
+    top: 0;
+    outline: 2px solid #C6A878;
+    outline-offset: 2px;
+  }
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -52,10 +74,16 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="th"
       className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} h-full antialiased`}
     >
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: skipLinkStyle }} />
+      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

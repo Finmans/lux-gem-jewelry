@@ -42,24 +42,36 @@ export function NewsletterForm({ sourcePage = "/" }: { sourcePage?: string }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="w-full" noValidate>
+    <form onSubmit={onSubmit} className="w-full" noValidate aria-label="Newsletter subscription">
       <div className="flex gap-0 max-w-sm">
-        <input
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          placeholder="Your email address"
-          required
-          className="flex-1 bg-[#111115] border border-[#2A2A30] border-r-0 px-4 py-3 text-sm text-[#F6F1E8] placeholder:text-[#8A8F98]/50 focus:outline-none focus:border-[#C6A878]/50 transition-colors"
-        />
+        <div className="flex-1">
+          <label htmlFor="newsletter-email" className="sr-only">
+            Email address
+          </label>
+          <input
+            id="newsletter-email"
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="Your email address"
+            required
+            autoComplete="email"
+            aria-describedby="newsletter-hint"
+            className="w-full bg-[#111115] border border-[#2A2A30] border-r-0 px-4 py-3 text-sm text-[#F6F1E8] placeholder:text-[#8A8F98]/50 focus:outline-none focus:border-[#C6A878]/50 transition-colors"
+          />
+        </div>
         <button
           type="submit"
           disabled={submitting}
+          aria-label={submitting ? "Subscribing..." : "Subscribe to newsletter"}
           className="bg-[#C6A878] text-[#0B0B0D] px-6 py-3 text-[10px] tracking-[0.25em] uppercase font-medium hover:bg-[#D9C4A0] transition-colors whitespace-nowrap disabled:opacity-70"
         >
           {submitting ? "Submitting" : "Subscribe"}
         </button>
       </div>
+      <p id="newsletter-hint" className="sr-only">
+        Enter your email to subscribe to our newsletter
+      </p>
       <input
         type="text"
         value={website}
@@ -69,9 +81,13 @@ export function NewsletterForm({ sourcePage = "/" }: { sourcePage?: string }) {
         aria-hidden="true"
         className="hidden"
       />
-      {state.type !== "idle" ? (
-        <p className={`mt-2 text-xs ${state.type === "success" ? "text-[#C6A878]" : "text-[#d98f8f]"}`}>{state.message}</p>
-      ) : null}
+      <div role="status" aria-live="polite" aria-atomic="true">
+        {state.type !== "idle" ? (
+          <p className={`mt-2 text-xs ${state.type === "success" ? "text-[#C6A878]" : "text-[#d98f8f]"}`}>
+            {state.message}
+          </p>
+        ) : null}
+      </div>
     </form>
   );
 }

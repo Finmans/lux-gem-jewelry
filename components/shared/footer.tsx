@@ -46,7 +46,10 @@ const socials = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-[#2A2A30] bg-[#080809]">
+    <footer
+      aria-label="Site footer"
+      className="border-t border-[#2A2A30] bg-[#080809]"
+    >
       {/* Top band */}
       <div className="border-b border-[#1A1A1E] py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -60,8 +63,8 @@ export function Footer() {
                 Jewelry Co., Ltd.
               </p>
               <p className="text-sm text-[#8A8F98] leading-relaxed font-light">
-                Lab-grown diamonds of exceptional beauty. Crafting timeless pieces
-                with modern transparency and uncompromising precision.
+                Lab-grown diamonds of exceptional beauty. Crafting timeless
+                pieces with modern transparency and uncompromising precision.
               </p>
             </div>
 
@@ -84,7 +87,7 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
             {Object.entries(footerLinks).map(([category, links]) => (
-              <div key={category}>
+              <nav key={category} aria-label={`${category} links`}>
                 <p className="text-[10px] tracking-[0.3em] text-[#C6A878] uppercase mb-5">
                   {category}
                 </p>
@@ -100,7 +103,7 @@ export function Footer() {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </nav>
             ))}
           </div>
         </div>
@@ -113,18 +116,20 @@ export function Footer() {
             © 2024 บริษัท ลักซ์เจมส์จิวเวลรี่ จำกัด / LUX GEM JEWELRY CO., LTD.
             All rights reserved.
           </p>
-          <div className="flex items-center gap-3">
-            {socials.map(({ Icon, label, href }) => (
-              <a
-                key={label}
-                href={href}
-                aria-label={label}
-                className="w-8 h-8 flex items-center justify-center border border-[#2A2A30] text-[#8A8F98] hover:border-[#C6A878]/50 hover:text-[#C6A878] transition-all duration-300"
-              >
-                <Icon className="w-3.5 h-3.5" />
-              </a>
-            ))}
-          </div>
+          <nav aria-label="Social media links">
+            <div className="flex items-center gap-3">
+              {socials.map(({ Icon, label, href }) => (
+                <a
+                  key={label}
+                  href={href}
+                  aria-label={label}
+                  className="w-8 h-8 flex items-center justify-center border border-[#2A2A30] text-[#8A8F98] hover:border-[#C6A878]/50 hover:text-[#C6A878] transition-all duration-300"
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                </a>
+              ))}
+            </div>
+          </nav>
         </div>
       </div>
     </footer>
