@@ -6,21 +6,26 @@ import { BrandStorySection } from "@/components/sections/brand-story";
 import { CustomJourneySection } from "@/components/sections/custom-journey";
 import { TrustSection } from "@/components/sections/trust-section";
 import { getCollections, getDiamonds } from "@/lib/site-data";
+import { setRequestLocale } from "next-intl/server";
+
+type Props = { params: Promise<{ locale: string }> };
 
 export const dynamic = "force-dynamic";
 
-export default async function LocaleHomePage() {
+export default async function LocaleHomePage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   const [collections, diamonds] = await Promise.all([getCollections(), getDiamonds()]);
-
-  return (
-    <main>
-      <LuxHeroSection diamondCount={diamonds.length} />
-      <EntryGateSection />
-      <FeaturedCollectionsSection collections={collections} />
-      <DiamondStockPreviewSection diamonds={diamonds} />
-      <BrandStorySection diamondCount={diamonds.length} />
-      <CustomJourneySection />
-      <TrustSection />
-    </main>
-  );
-}
+
+  return (
+    <main>
+      <LuxHeroSection diamondCount={diamonds.length} />
+      <EntryGateSection />
+      <FeaturedCollectionsSection collections={collections} />
+      <DiamondStockPreviewSection diamonds={diamonds} />
+      <BrandStorySection diamondCount={diamonds.length} />
+      <CustomJourneySection />
+      <TrustSection />
+    </main>
+  );
+}
