@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useSyncExternalStore } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import type { DiamondRecord } from "@/lib/site-data";
 import {
@@ -10,12 +10,20 @@ import {
 } from "@/lib/wishlist-storage";
 
 export function WishlistPageClient({ diamonds }: { diamonds: DiamondRecord[] }) {
-  const ids = useSyncExternalStore(subscribeWishlist, getWishlistIds, () => []);
+  const [ids, setIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    setIds(getWishlistIds());
+    const unsubscribe = subscribeWishlist(() => setIds(getWishlistIds()));
+    return unsubscribe;
+  }, []);
 
   const items = useMemo(() => diamonds.filter((diamond) => ids.includes(diamond.id)), [diamonds, ids]);
 
   function removeItem(id: string) {
-    setWishlistIds(ids.filter((item) => item !== id));
+    const next = ids.filter((item) => item !== id);
+    setIds(next);
+    setWishlistIds(next);
   }
 
   return (
