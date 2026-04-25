@@ -1,78 +1,81 @@
-{
-  "nav": {
-    "collections": "Collections",
-    "diamondStock": "Diamond Stock",
-    "buildYourRing": "Build Your Ring",
-    "customDesign": "Custom Design",
-    "aboutLUXGEM": "About LUX GEM",
-    "search": "Search",
-    "wishlist": "Wishlist",
-    "bookConsultation": "Book Consultation"
-  },
-  "hero": {
-    "tagline": "Crafted Brilliance, Reimagined",
-    "subtitle": "Lab-grown diamonds of exceptional beauty. Timeless design with uncompromising precision.",
-    "exploreCollections": "Explore Collections",
-    "buildYourRing": "Build Your Ring",
-    "diamondsAvailable": "diamonds available"
-  },
-  "entryGate": {
-    "title": "LUX GEM",
-    "subtitle": "Lab-Grown Diamond Jewelry",
-    "tagline": "Every piece tells a story"
-  },
-  "collections": {
-    "title": "Our Collections",
-    "subtitle": "Exceptional lab-grown diamond jewelry for every milestone",
-    "startingFrom": "Starting from",
-    "explore": "Explore",
-    "viewAll": "View All Collections",
-    "items": "pieces"
-  },
-  "diamonds": {
-    "title": "Diamond Stock",
-    "subtitle": "Hand-selected lab-grown diamonds with IGI certification",
-    "carat": "Carat",
-    "color": "Color",
-    "clarity": "Clarity",
-    "cut": "Cut",
-    "lab": "Lab",
-    "price": "Price",
-    "certificate": "Certificate",
-    "addToWishlist": "Add to Wishlist",
-    "viewDetails": "View Details",
-    "available": "Available",
-    "sold": "Sold"
-  },
-  "brandStory": {
-    "title": "Crafted With Intention",
-    "subtitle": "Every diamond selected. Every setting perfected. Every piece designed to last generations.",
-    "description": "LUX GEM bridges the gap between extraordinary beauty and modern ethics. We source only the finest lab-grown diamonds, working with precision jewelers who share our obsession with quality.",
-    "cta": "Our Story"
-  },
-  "customJourney": {
-    "title": "Create Your Dream Ring",
-    "subtitle": "Design exactly what you envision — choose your diamond, setting, and metal. See a 3D preview before you commit.",
-    "step1Title": "Choose Your Diamond",
-    "step1Desc": "Select from our curated stock of IGI-certified lab-grown diamonds.",
-    "step2Title": "Select Your Setting",
-    "step2Desc": "From timeless solitaires to elaborate halos — find your perfect match.",
-    "step3Title": "Preview in 3D",
-    "step3Desc": "Visualize your creation with our real-time 3D configurator.",
-    "startBuilding": "Start Building",
-    "bookAppointment": "Book Appointment"
-  },
-  "trust": {
-    "title": "The LUX GEM Promise",
-    "lifetimeWarranty": "Lifetime Warranty",
-    "lifetimeWarrantyDesc": "Every piece comes with our lifetime craftsmanship warranty and complimentary annual servicing.",
-    "returnsTitle": "30-Day Returns",
-    "returnsDesc": "Not in love with it? Return any item within 30 days for a full refund.",
-    "securePayment": "Secure Payment",
-    "securePaymentDesc": "Bank transfer, credit card, installment plans with bank-grade encryption.",
-    "diamondCertificate": "Diamond Certificate",
-    "diamondCertificateDesc": "Every diamond over 0.30ct ships with its official IGI grading certificate."
-  },
+{
+  "404": {
+    "title": "Page Not Found",
+    "message": "The page you're looking for doesn't exist.",
+    "backHome": "Back to Home"
+  },
+  "nav": {
+    "collections": "Collections",
+    "diamondStock": "Diamond Stock",
+    "buildYourRing": "Build Your Ring",
+    "customDesign": "Custom Design",
+    "aboutLUXGEM": "About LUX GEM",
+    "search": "Search",
+    "wishlist": "Wishlist",
+    "bookConsultation": "Book Consultation"
+  },
+  "hero": {
+    "tagline": "Crafted Brilliance, Reimagined",
+    "subtitle": "Lab-grown diamonds of exceptional beauty. Timeless design with uncompromising precision.",
+    "exploreCollections": "Explore Collections",
+    "buildYourRing": "Build Your Ring",
+    "diamondsAvailable": "diamonds available"
+  },
+  "entryGate": {
+    "title": "LUX GEM",
+    "subtitle": "Lab-Grown Diamond Jewelry",
+    "tagline": "Every piece tells a story"
+  },
+  "collections": {
+    "title": "Our Collections",
+    "subtitle": "Exceptional lab-grown diamond jewelry for every milestone",
+    "startingFrom": "Starting from",
+    "explore": "Explore",
+    "viewAll": "View All Collections",
+    "items": "pieces"
+  },
+  "diamonds": {
+    "title": "Diamond Stock",
+    "subtitle": "Hand-selected lab-grown diamonds with IGI certification",
+    "carat": "Carat",
+    "color": "Color",
+    "clarity": "Clarity",
+    "cut": "Cut",
+    "lab": "Lab",
+    "price": "Price",
+    "certificate": "Certificate",
+    "addToWishlist": "Add to Wishlist",
+    "viewDetails": "View Details",
+    "available": "Available",
+    "sold": "Sold"
+  },
+  "brandStory": {
+    "title": "Crafted With Intention",
+    "subtitle": "Every diamond selected. Every setting perfected. Every piece designed to last generations.",
+    "description": "LUX GEM bridges the gap between extraordinary beauty and modern ethics. We source only the finest lab-grown diamonds, working with precision jewelers who share our obsession with quality.",
+    "cta": "Our Story"
+  },
+  "customJourney": {
+    "title": "Create Your Dream Ring",
+    "subtitle": "Design exactly what you envision — choose your diamond, setting, and metal. See a 3D preview before you commit.",
+    "step1Title": "Choose Your Diamond",
+    "step1Desc": "Select from our curated stock of IGI-certified lab-grown diamonds.",
+    "step2Title": "Select Your Setting",
+    "step2Desc": "From timeless solitaires to elaborate halos — find your perfect match.",
+    "step3Title": "Preview in 3D",
+    "step3Desc": "Visualize your creation with our real-time 3D configurator.",
+    "startBuilding": "Start Building",
+    "bookAppointment": "Book Appointment"
+  },
+  "trust": {
+    "title": "The LUX GEM Promise",
+    "lifetimeWarranty": "Lifetime Warranty",
+    "lifetimeWarrantyDesc": "Every piece comes with our lifetime craftsmanship warranty and complimentary annual servicing.",
+    "securePayment": "Secure Payment",
+    "securePaymentDesc": "Bank transfer, credit card, installment plans with bank-grade encryption.",
+    "diamondCertificate": "Diamond Certificate",
+    "diamondCertificateDesc": "Every diamond over 0.30ct ships with its official IGI grading certificate."
+  },
   "footer": {
     "joinInnerCircle": "Join our inner circle",
     "exclusiveText": "Exclusive collections, events & diamond education.",
@@ -110,60 +113,55 @@
     "contact": "Contact",
     "privacyPolicy": "Privacy Policy"
   },
-  "cta": {
-    "title": "Find Your Perfect Diamond",
-    "subtitle": "Book a complimentary consultation with our diamond experts",
-    "button": "Book Consultation"
-  },
-  "testimonials": {
-    "title": "What Our Clients Say",
-    "verified": "Verified Purchase"
-  },
-  "about": {
-    "title": "About LUX GEM",
-    "subtitle": "Our Story",
-    "philosophy": "Our Philosophy"
-  },
-  "contact": {
-    "title": "Contact Us",
-    "getInTouch": "Get in Touch",
-    "visitUs": "Visit Us",
-    "callUs": "Call Us",
-    "emailUs": "Email Us",
-    "name": "Full Name",
-    "email": "Email Address",
-    "phone": "Phone Number",
-    "message": "Your Message",
-    "subject": "Subject",
-    "submit": "Send Message",
-    "success": "Message sent successfully!",
-    "error": "Something went wrong. Please try again."
-  },
-  "appointment": {
-    "title": "Book a Consultation",
-    "subtitle": "Meet with our diamond experts",
-    "selectDate": "Select Date",
-    "selectTime": "Select Time",
-    "selectStore": "Select Store",
-    "name": "Full Name",
-    "email": "Email Address",
-    "phone": "Phone Number",
-    "occasion": "Occasion",
-    "notes": "Special Requests",
-    "submit": "Confirm Booking",
-    "success": "Appointment booked successfully!",
-    "error": "Something went wrong. Please try again."
-  },
-  "404": {
-    "title": "Page Not Found",
-    "message": "The page you're looking for doesn't exist.",
-    "backHome": "Back to Home"
-  },
-  "common": {
-    "loading": "Loading...",
-    "error": "Something went wrong",
-    "close": "Close",
-    "viewMore": "View More",
-    "learnMore": "Learn More"
-  }
-}
+  "cta": {
+    "title": "Find Your Perfect Diamond",
+    "subtitle": "Book a complimentary consultation with our diamond experts",
+    "button": "Book Consultation"
+  },
+  "testimonials": {
+    "title": "What Our Clients Say",
+    "verified": "Verified Purchase"
+  },
+  "about": {
+    "title": "About LUX GEM",
+    "subtitle": "Our Story",
+    "philosophy": "Our Philosophy"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "getInTouch": "Get in Touch",
+    "visitUs": "Visit Us",
+    "callUs": "Call Us",
+    "emailUs": "Email Us",
+    "name": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "message": "Your Message",
+    "subject": "Subject",
+    "submit": "Send Message",
+    "success": "Message sent successfully!",
+    "error": "Something went wrong. Please try again."
+  },
+  "appointment": {
+    "title": "Book a Consultation",
+    "subtitle": "Meet with our diamond experts",
+    "selectDate": "Select Date",
+    "selectTime": "Select Time",
+    "selectStore": "Select Store",
+    "name": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "occasion": "Occasion",
+    "notes": "Special Requests",
+    "submit": "Confirm Booking",
+    "success": "Appointment booked successfully!",
+    "error": "Something went wrong. Please try again."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "close": "Close",
+    "viewMore": "View More",
+    "learnMore": "Learn More"
+  }
+}
